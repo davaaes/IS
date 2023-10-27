@@ -1,9 +1,9 @@
 import pandas as pd
 
-dfexcel = pd.read_excel("./practica1/archivoscsv/housing.xlsx")
+dfexcel = pd.read_excel("./archivoscsv\housing.xlsx")
 
 print(dfexcel)
 
-dfcsv = pd.read_csv("./practica1/archivoscsv/housingcsv.csv")
+dfcsv = pd.read_csv("./archivoscsv\housingcsv.csv")
 
 print(dfcsv)

@@ -6,7 +6,7 @@ Created on Wed Oct 25 12:19:21 2023
 """
 import pandas as pd
 
-df = pd.read_excel("housing.xlsx")  # O pd.read_csv("housing.csv") si prefieres el archivo CSV
+df = pd.read_excel("./archivoscsv\housing.xlsx")  # O pd.read_csv("housing.csv") si prefieres el archivo CSV
 
 columna1 = input("ingresa el nombre de la primera columna: ")
 while columna1 not in df.columns or not pd.api.types.is_numeric_dtype(df[columna1]):
