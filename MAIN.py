@@ -3,7 +3,8 @@ from tkinter import filedialog
 from tkinter import ttk
 
 import lectorcsv as l
-
+def mostrar_modelo():
+    print('hola')
 def cargar_archivo():
     global archivo
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
@@ -50,6 +51,8 @@ def cargar_archivo():
 def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
+    global estados_checkbuttons
+
     frame_but = tk.Frame(ventana)
     frame_but.pack(pady=20, padx=20)
     datos=l.leer_archivo(archivo)
@@ -62,8 +65,11 @@ def crear_checkbuttons():
 
     # Crear Checkbuttons dinámicamente en columnas
     for i, columna in enumerate(columnas):
+        chk=tk.Label(frame_but,text='VARIABLES INDEPENDIENTES:')
+        chk.grid(row=0,column=0,sticky='w')
         checkbutton = ttk.Checkbutton(frame_but, text=columna, variable=estados_checkbuttons[i])
-        checkbutton.grid(row=0, column=i, sticky="w")
+        checkbutton.grid(row=0, column=i+1, sticky="w")
+
 
 
     columnos = list(datos.columns)
@@ -76,8 +82,13 @@ def crear_checkbuttons():
 
     # Crear Radiobuttons dinámicamente en columnas
     for i, columna in enumerate(columnos):
+        chk=tk.Label(frame_but,text='VARIABLE OBJETIVO:')
+        chk.grid(row=1,column=0,sticky='w')
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
-        radiobutton.grid(row=1, column=i, sticky="w")
+        radiobutton.grid(row=1, column=i+1, sticky="w")
+        print(opcion_seleccionada)     
+    boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
+    boton_cargar.grid(row=2,column=5,padx=10,pady=10)
 # Crear ventana y otros elementos
 
 
