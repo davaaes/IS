@@ -19,8 +19,12 @@ def cargar_archivo():
         if dataframe is not None:
             print("Archivo leído exitosamente.")
 
+            # Crear un Frame para la tabla
+            frame_tabla = tk.Frame(ventana)
+            frame_tabla.pack(pady=100, padx=100)
+
             # Crear un Treeview para mostrar la tabla
-            treeview = ttk.Treeview(ventana)
+            treeview = ttk.Treeview(frame_tabla)
             treeview["columns"] = tuple(dataframe.columns)
             
             # Configurar encabezados
@@ -30,19 +34,19 @@ def cargar_archivo():
             # Insertar datos
             for i, row in dataframe.iterrows():
                 treeview.insert("", i, values=tuple(row))
-
-            # Agregar barras de desplazamiento vertical y horizontal directamente en el Treeview
-            yscroll = ttk.Scrollbar(ventana, orient="vertical", command=treeview.yview)
+            
+            # Agregar barras de desplazamiento vertical y horizontal dentro del Treeview
+            yscroll = ttk.Scrollbar(frame_tabla, orient="vertical", command=treeview.yview)
             yscroll.pack(side="right", fill="y")
             treeview.configure(yscrollcommand=yscroll.set)
 
-            xscroll = ttk.Scrollbar(ventana, orient="horizontal", command=treeview.xview)
+            xscroll = ttk.Scrollbar(frame_tabla, orient="horizontal", command=treeview.xview)
             xscroll.pack(side="bottom", fill="x")
             treeview.configure(xscrollcommand=xscroll.set)
             
-            # Centrar la tabla en la ventana
-            treeview.pack(pady=10, padx=10)
-            
+            # Centrar la tabla en el Frame
+            treeview.pack()
+
 # Crear ventana y otros elementos
 ventana = tk.Tk()
 
@@ -58,3 +62,4 @@ boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.pack(pady=10)
 
 ventana.mainloop()
+
