@@ -1,85 +1,81 @@
+import sklearn as sk 
+import matplotlib.pylab as plt
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn import linear_model
+import seaborn as sb
+import numpy as np
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
-import lectorcsv as l
-
-def regresion_lineal(x,y,archivo_seleccionado):
-    data = l.leer_archivo(archivo_seleccionado)
-    # Definir la variable independiente (característica) y la variable dependiente (target)
-    X = data[x[0]]
-    Y = data[y[0]]
-
-    # Dividir los datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
-
-    # Crear un modelo de regresión lineal simple
-    model = LinearRegression()
-
-    # Ajustar el modelo a los datos de entrenamiento
-    model.fit(X_train, Y_train)
-
-    # Hacer predicciones en el conjunto de prueba
-    Y_pred = model.predict(X_test)
-
-    # Calcular el error cuadrático medio (MSE) en el conjunto de prueba
-    mse = mean_squared_error(Y_test, Y_pred)
-    print(f"Error cuadrático medio: {mse}")
-
-    # Graficar los puntos de datos y la línea de regresión
-    plt.scatter(X_test, Y_test, label='Datos reales')
-    plt.plot(X_test, Y_pred, color='red', label='Línea de regresión')
-    plt.xlabel('Median Income')
-    plt.ylabel('total_rooms')
-    plt.legend()
-    plt.title('Regresión Lineal Simple')
-    plt.show()
+from sklearn.metrics import mean_squared_error
+from mpl_toolkits.mplot3d import Axes3D 
 
 
+def regresion(columna_indep,columnas_dep,archivo):
 
-def regresion_multiple():
-    # Carga de datos desde un archivo CSV
-    datos = pd.read_csv("housingcsv.csv")
+    if archivo.endswith('.csv'):
+        df = pd.read_csv(archivo)
+    elif archivo.endswith('.xlsx'):
+        df = pd.read_excel(archivo)
 
-    # Variables independientes y variable target
-    X = datos[['latitude', 'housing_median_age']]
-    y = datos['median_income']  # Variable target
+    indep_v = df[columna_indep].values
 
-    # División de datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    x = len(columnas_dep)
+    dep_v = []
+    for i in range(x):
+        valores = df[columnas_dep[i]].values
+        dep_v.append(valores)
 
-    # Creación y entrenamiento del modelo de regresión lineal
-    modelo = linear_model.LinearRegression()
-    modelo.fit(X_train, y_train)
+    X1 = np.array(dep_v).T
+    Y1 = np.array(indep_v)
 
-    # Predicciones con el modelo entrenado
-    print(X_test)
-    y_pred = modelo.predict(X_test)
 
-    # Coeficientes e intercepto del modelo
-    print('Coeficientes:', modelo.coef_)
-    print('Intercepto:', modelo.intercept_)
+    reg = LinearRegression()
 
-    # Métricas de evaluación del modelo
-    print('Error cuadrático medio (MSE): %.2f' % mean_squared_error(y_test, y_pred))
-    print('Coeficiente de determinación (R^2): %.2f' % r2_score(y_test, y_pred))
-    plt.figure(figsize=(8, 6))
+    reg = reg.fit(X1,Y1)
 
-    # Graficar los datos reales de test
-    plt.scatter(X_test['latitude'], y_test, label='Datos reales')
+    y_pred = reg.predict(X1)
 
-    # Graficar la predicción del modelo
-    plt.scatter(X_test['latitude'], y_pred, color='red', label='Predicciones')
 
-    plt.xlabel('Latitud')
-    plt.ylabel('Income')
-    plt.legend()
-    plt.title('Modelo de Regresión Múltiple')
+    error = np.sqrt(mean_squared_error(Y1,y_pred))
+    r2 = reg.score(X1,Y1)
 
-    plt.show()
+    print("Error sin raíz: %.3f" % mean_squared_error(Y1, y_pred))
+    print("El error es: ", error)
+    print("r2 es : ", r2)
+    print('Coefficients: \n', reg.coef_)
+    print('Independent term: \n', reg.intercept_)
+    print("Mean squared error: %.3f" % mean_squared_error(Y1, y_pred))
 
-regresion_lineal()
-regresion_multiple()
+
+    if len(columnas_dep) == 1 :
+        plt.scatter(X1, Y1, label='Datos reales' , s = 10)
+        plt.plot(X1, y_pred, color='red', label='Línea de regresión')
+        plt.xlabel(str(columna_indep[0]).upper())
+        plt.ylabel(str(columnas_dep[0]).upper())
+        plt.legend()
+        plt.title('Regresión Lineal Simple')
+        plt.show()
+
+    elif len(columnas_dep) == 2:
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(dep_v[0], dep_v[1], Y1, c='r', marker='o')
+        ax.set_xlabel((str(columnas_dep[0])).upper())
+        ax.set_ylabel((str(columnas_dep[1])).upper())
+        ax.set_zlabel((str(columna_indep[0])).upper())
+
+        x10_range = np.linspace(min(dep_v[0]), max(dep_v[0]), 10)
+        x11_range = np.linspace(min(dep_v[1]), max(dep_v[1]), 10)
+        x1_mesh, x2_mesh = np.meshgrid(x10_range, x11_range)
+        y_pred = reg.predict(np.vstack((x1_mesh.ravel(), x2_mesh.ravel())).T)
+        y_pred = y_pred.reshape(x1_mesh.shape)
+        ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
+        plt.show()
+
+
+
+
+archivo = "housingcsv.csv"
+columna_indep =['latitude']
+columnas_dep = ['longitude','total_rooms','population']
+
+regresion(columna_indep,columnas_dep,archivo)
