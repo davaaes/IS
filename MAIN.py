@@ -21,7 +21,7 @@ def cargar_archivo():
 
             # Crear un Frame para la tabla
             frame_tabla = tk.Frame(ventana)
-            frame_tabla.pack(pady=100, padx=100)
+            frame_tabla.pack(pady=20, padx=20)
 
             # Crear un Treeview para mostrar la tabla
             treeview = ttk.Treeview(frame_tabla)
@@ -46,8 +46,44 @@ def cargar_archivo():
             
             # Centrar la tabla en el Frame
             treeview.pack()
+    crear_checkbuttons()
+def crear_checkbuttons():
+    # Leer las columnas desde el archivo
+    # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
+    frame_but = tk.Frame(ventana)
+    frame_but.pack(pady=20, padx=20)
+    datos=l.leer_archivo(archivo)
+    columnas = list(datos.columns)
 
+    # Crear una nueva ventana para los Checkbuttons
+
+    # Variable para almacenar el estado de cada Checkbutton
+    estados_checkbuttons = [tk.BooleanVar() for _ in range(len(columnas))]
+
+    # Crear Checkbuttons dinámicamente en columnas
+    for i, columna in enumerate(columnas):
+        checkbutton = ttk.Checkbutton(frame_but, text=columna, variable=estados_checkbuttons[i])
+        checkbutton.grid(row=0, column=i, sticky="w")
+
+
+    columnos = list(datos.columns)
+
+    # Crear una nueva ventana para los Radiobuttons
+
+
+    # Variable para almacenar la opción seleccionada
+    opcion_seleccionada = tk.StringVar()
+
+    # Crear Radiobuttons dinámicamente en columnas
+    for i, columna in enumerate(columnos):
+        radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
+        radiobutton.grid(row=1, column=i, sticky="w")
 # Crear ventana y otros elementos
+
+
+
+
+
 ventana = tk.Tk()
 
 ancho_pantalla = ventana.winfo_screenwidth()
