@@ -6,3 +6,5 @@ def leer_archivo(ruta):
     elif ruta.endswith('.xlsx'):
         df = pd.read_excel(ruta)
     return df
+
+
