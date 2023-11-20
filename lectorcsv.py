@@ -1,7 +1,10 @@
 import pandas as pd
-def leer_excel():
-    dfexcel = pd.read_excel("./archivoscsv\housing.xlsx")
-    return dfexcel
-def leer_csv():
-    dfcsv = pd.read_csv("./archivoscsv\housingcsv.csv")
-    return dfcsv
+
+def leer_archivo(ruta):
+    if ruta.endswith('.csv'):
+        df = pd.read_csv(ruta)
+    elif ruta.endswith('.xlsx'):
+        df = pd.read_excel(ruta)
+    return df
+
+

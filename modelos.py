@@ -5,34 +5,33 @@ from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
+import lectorcsv as l
 
-
-def regresion_lineal():
-    data = pd.read_csv("housingcsv.csv")
-
+def regresion_lineal(x,y,archivo_seleccionado):
+    data = l.leer_archivo(archivo_seleccionado)
     # Definir la variable independiente (característica) y la variable dependiente (target)
-    X = data[['median_income']]
-    y = data['total_rooms']
+    X = data[x[0]]
+    Y = data[y[0]]
 
     # Dividir los datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
     # Crear un modelo de regresión lineal simple
     model = LinearRegression()
 
     # Ajustar el modelo a los datos de entrenamiento
-    model.fit(X_train, y_train)
+    model.fit(X_train, Y_train)
 
     # Hacer predicciones en el conjunto de prueba
-    y_pred = model.predict(X_test)
+    Y_pred = model.predict(X_test)
 
     # Calcular el error cuadrático medio (MSE) en el conjunto de prueba
-    mse = mean_squared_error(y_test, y_pred)
+    mse = mean_squared_error(Y_test, Y_pred)
     print(f"Error cuadrático medio: {mse}")
 
     # Graficar los puntos de datos y la línea de regresión
-    plt.scatter(X_test, y_test, label='Datos reales')
-    plt.plot(X_test, y_pred, color='red', label='Línea de regresión')
+    plt.scatter(X_test, Y_test, label='Datos reales')
+    plt.plot(X_test, Y_pred, color='red', label='Línea de regresión')
     plt.xlabel('Median Income')
     plt.ylabel('total_rooms')
     plt.legend()
