@@ -84,7 +84,3 @@ def regresion_multiple():
 
 regresion_lineal()
 regresion_multiple()
-
-
-
-
