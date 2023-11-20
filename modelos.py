@@ -6,14 +6,12 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from mpl_toolkits.mplot3d import Axes3D 
+from lectorcsv import *
 
 
 def regresion(columna_indep,columnas_dep,archivo):
 
-    if archivo.endswith('.csv'):
-        df = pd.read_csv(archivo)
-    elif archivo.endswith('.xlsx'):
-        df = pd.read_excel(archivo)
+    df = leer_archivo(archivo)
 
     indep_v = df[columna_indep].values
 
@@ -36,13 +34,20 @@ def regresion(columna_indep,columnas_dep,archivo):
 
     error = np.sqrt(mean_squared_error(Y1,y_pred))
     r2 = reg.score(X1,Y1)
-
+    print("-"*36)
     print("Error sin raíz: %.3f" % mean_squared_error(Y1, y_pred))
-    print("El error es: ", error)
+    print("-"*36)
+    print("Error : ", error)
+    print("-"*36)
     print("r2 es : ", r2)
-    print('Coefficients: \n', reg.coef_)
+    print("-"*36)
+    coef = reg.coef_
+    
+    for i  in range(len(coef[0])):
+        print("Beta " , str(i+1) ," =",coef[0][i])
+    print("-"*36)
     print('Independent term: \n', reg.intercept_)
-    print("Mean squared error: %.3f" % mean_squared_error(Y1, y_pred))
+    
 
 
     if len(columnas_dep) == 1 :
@@ -74,7 +79,7 @@ def regresion(columna_indep,columnas_dep,archivo):
 
 
 
-archivo = "housingcsv.csv"
+archivo = "housing.db"
 columna_indep =['latitude']
 columnas_dep = ['longitude','total_rooms','population']
 
