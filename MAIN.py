@@ -67,7 +67,7 @@ def crear_checkbuttons():
     global estados_checkbuttons, opcion_seleccionada,columnas 
 
     frame_but = tk.Frame(ventana)
-    frame_but.pack(pady=20, padx=20)
+    frame_but.pack(pady=10, padx=10)
     datos=l.leer_archivo(archivo)
     columnas = list(datos.columns)
 
@@ -100,7 +100,7 @@ def crear_checkbuttons():
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
-    boton_cargar.grid(row=2,column=5,padx=10,pady=10)
+    boton_cargar.grid(row=2,column=5,padx=10,pady=5)
 # Crear ventana y otros elementos
 
 
@@ -114,11 +114,13 @@ alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 
 entrada_texto = tk.Entry(ventana, state='disabled', width=40)
-entrada_texto.pack(pady=10)
+entrada_texto.pack(pady=5)
 
 # Botón para cargar un archivo
 boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
-boton_cargar.pack(pady=10)
+boton_cargar.place(x=400,y=2)
+
+
 
 ventana.mainloop()
 
