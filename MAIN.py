@@ -3,8 +3,22 @@ from tkinter import filedialog
 from tkinter import ttk
 
 import lectorcsv as l
+
+global estados_checkbuttons, opcion_seleccionada
+
+
 def mostrar_modelo():
-    print('hola')
+    global estados_checkbuttons, opcion_seleccionada,columnas
+    list_vi=[]
+    print(opcion_seleccionada.get())
+    for i in range(len(estados_checkbuttons)):
+        if estados_checkbuttons[i].get()==True:
+            list_vi.append(columnas[i])
+    print(list_vi)
+
+
+
+    
 def cargar_archivo():
     global archivo
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
@@ -18,7 +32,6 @@ def cargar_archivo():
         dataframe = l.leer_archivo(archivo)
 
         if dataframe is not None:
-            print("Archivo leído exitosamente.")
 
             # Crear un Frame para la tabla
             frame_tabla = tk.Frame(ventana)
@@ -51,7 +64,7 @@ def cargar_archivo():
 def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
-    global estados_checkbuttons
+    global estados_checkbuttons, opcion_seleccionada,columnas 
 
     frame_but = tk.Frame(ventana)
     frame_but.pack(pady=20, padx=20)
@@ -86,7 +99,6 @@ def crear_checkbuttons():
         chk.grid(row=1,column=0,sticky='w')
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
         radiobutton.grid(row=1, column=i+1, sticky="w")
-        print(opcion_seleccionada)     
     boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,padx=10,pady=10)
 # Crear ventana y otros elementos
