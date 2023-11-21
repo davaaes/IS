@@ -76,6 +76,6 @@ def regresion(columna_indep,columnas_dep,archivo):
 
 archivo = "housingcsv.csv"
 columna_indep =['latitude']
-columnas_dep = ['longitude','total_rooms','population']
+columnas_dep = ['longitude','total_rooms']
 
 regresion(columna_indep,columnas_dep,archivo)
