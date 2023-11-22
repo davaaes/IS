@@ -9,7 +9,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from lector import *
 
 
-def regresion(columna_indep,columnas_dep,df):
+def regresion(columna_indep,columnas_dep,df, name=None):
+
+    
 
     df= df.dropna()
 
@@ -64,7 +66,18 @@ def regresion(columna_indep,columnas_dep,df):
         leyend = "Y = "+ "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
         plt.legend(title = leyend,title_fontsize =8    )
         plt.title('Regresión Lineal Simple')
-        plt.show()
+        
+
+        if name !=None:
+    
+            plt.savefig(name)
+            
+            
+        elif name== None:
+
+            plt.show()
+
+
 
     elif len(columnas_dep) == 2:
 
@@ -83,7 +96,16 @@ def regresion(columna_indep,columnas_dep,df):
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
         leyend = "Y = "+ "(" +str(  coef[0][0] ) + ")"+"*x1 + " + "(" + str(  coef[0][0]  ) +")" +"*x2 +"+"("  + str(   interc  ) + ")"
         ax.legend(loc = 9,title_fontsize = 8 , title = leyend  )
-        plt.show()
+        
+        if name !=None:
+    
+            plt.savefig(name)
+            
+            
+        elif name== None:
+
+            plt.show()
+
 
     elif len(columnas_dep) > 2:
         
@@ -93,6 +115,5 @@ def regresion(columna_indep,columnas_dep,df):
         formul += "("  + str(   interc  ) + ")"
         print("Fórmula: \n",formul)
         print("-"*36)
-            
     
-
+    

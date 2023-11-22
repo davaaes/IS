@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
-
+import sys
 import lector as l
 from modelos import *
+
 global estados_checkbuttons, opcion_seleccionada 
 
 
@@ -14,7 +15,20 @@ def mostrar_modelo():
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,dataframe)
+    regresion(lista_vo,list_vi,dataframe,)
+
+
+def guardar_modelo():
+    global dataframe, opcion_seleccionada,estados_checkbuttons
+    lista_vo=[opcion_seleccionada.get()]
+    list_vi=[]
+    for i in range(len(estados_checkbuttons)):
+        if estados_checkbuttons[i].get()==True:
+            list_vi.append(columnas[i])
+    regresion(lista_vo,list_vi,dataframe,"sacadon.png")
+
+def cerrar_programa():
+    sys.exit()
 
 
 
@@ -101,8 +115,16 @@ def crear_checkbuttons():
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,padx=10,pady=5)
-    boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO")
+    boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO", command=guardar_modelo)
     boton_guardar.grid(row=2,column=6,padx=10,pady=5)
+    boton_cerrar = tk.Button(frame_but, text="Cerrar Programa", command=cerrar_programa)
+    boton_cerrar.grid(row=2,column=8,padx=10,pady=5)
+    texto=tk.StringVar()
+    etiqueta=tk.Label(frame_but,text='como')
+    etiqueta.grid(row=2,column=7,pady=10)
+    pantalla=tk.Entry(frame_but, textvariable=texto)
+    pantalla.grid(row=2,column=7,pady=10,columnspan=3,rowspan=2)
+    
 
 
 # Crear ventana y otros elementos
