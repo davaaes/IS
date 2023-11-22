@@ -3,18 +3,17 @@ from tkinter import filedialog
 from tkinter import ttk
 
 import lectorcsv as l
-
-global estados_checkbuttons, opcion_seleccionada
+from modelos import *
+global estados_checkbuttons, opcion_seleccionada 
 
 
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas
     list_vi=[]
-    print(opcion_seleccionada.get())
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    print(list_vi)
+    regresion(opcion_seleccionada.get(),list_vi,archivo)
 
 
 
