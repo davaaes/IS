@@ -101,6 +101,9 @@ def crear_checkbuttons():
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,padx=10,pady=5)
+    boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO")
+    boton_guardar.grid(row=2,column=6,padx=10,pady=5)
+
 # Crear ventana y otros elementos
 
 
@@ -119,6 +122,7 @@ entrada_texto.pack(pady=5)
 # Botón para cargar un archivo
 boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.place(x=400,y=2)
+
 
 
 
