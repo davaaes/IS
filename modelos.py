@@ -11,7 +11,9 @@ from lector import *
 
 def regresion(columna_indep,columnas_dep,df):
 
-    df= df.dropna()
+    df= leer_archivo(df)
+
+    df = df.replace(np.nan,0)
 
     indep_v = df[columna_indep].values
 
@@ -98,9 +100,9 @@ def regresion(columna_indep,columnas_dep,df):
     
 
 archivo = "housing.db"
-c_i = ["latitude"]
+c_i = ["total_bedrooms"]
 
-c_ds = ["longitude"]
+c_ds = ["total_bedrooms","longitude"]
 
 regresion(c_i,c_ds,archivo)
 plt.show()
