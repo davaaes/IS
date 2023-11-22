@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 
-import lectorcsv as l
+import lector as l
 from modelos import *
 global estados_checkbuttons, opcion_seleccionada 
 
