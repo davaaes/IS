@@ -28,7 +28,7 @@ datos_a_guardar = {
     'edad': 19,
     'ciudad': 'A Coruna'
 }
-
+'''
 # Nombre del archivo
 nombre_archivo = 'practica1\IS\guardardatos.txt'
 
@@ -45,3 +45,4 @@ datos_recuperados2 = leer_datos2(nombre_archivo)
 
 # Mostrar los datos recuperados
 print("Datos recuperados:", datos_recuperados2)
+'''

@@ -2,25 +2,25 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 
-import lectorcsv as l
+import lector as l
 from modelos import *
 global estados_checkbuttons, opcion_seleccionada 
 
 
 def mostrar_modelo():
-    global estados_checkbuttons, opcion_seleccionada,columnas
+    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe
     lista_vo=[opcion_seleccionada.get()]
     list_vi=[]
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,archivo)
+    regresion(lista_vo,list_vi,dataframe)
 
 
 
     
 def cargar_archivo():
-    global archivo
+    global archivo,dataframe
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
     if archivo:
         entrada_texto.config(state='normal')  # Habilitar el cuadro de texto
@@ -101,6 +101,10 @@ def crear_checkbuttons():
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,padx=10,pady=5)
+    boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO")
+    boton_guardar.grid(row=2,column=6,padx=10,pady=5)
+
+
 # Crear ventana y otros elementos
 
 
@@ -119,6 +123,7 @@ entrada_texto.pack(pady=5)
 # Botón para cargar un archivo
 boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.place(x=400,y=2)
+
 
 
 
