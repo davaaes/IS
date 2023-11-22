@@ -9,11 +9,12 @@ global estados_checkbuttons, opcion_seleccionada
 
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas
+    lista_vo=[opcion_seleccionada.get()]
     list_vi=[]
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(opcion_seleccionada.get(),list_vi,archivo)
+    regresion(lista_vo,list_vi,archivo)
 
 
 
