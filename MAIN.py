@@ -118,7 +118,7 @@ def crear_checkbuttons():
     boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO", command=guardar_modelo)
     boton_guardar.grid(row=2,column=6,padx=10,pady=5)
     boton_cerrar = tk.Button(frame_but, text="Cerrar Programa", command=cerrar_programa)
-    boton_cerrar.grid(row=2,column=8,padx=10,pady=5)
+    boton_cerrar.grid(row=2,column=10,padx=10,pady=5)
     texto=tk.StringVar()
     etiqueta=tk.Label(frame_but,text='como')
     etiqueta.grid(row=2,column=7,pady=10)
