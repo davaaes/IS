@@ -6,12 +6,12 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from mpl_toolkits.mplot3d import Axes3D 
-from lectorcsv import *
+from lector import *
 
 
-def regresion(columna_indep,columnas_dep,archivo):
+def regresion(columna_indep,columnas_dep,df):
 
-    df = leer_archivo(archivo)
+    df= df.dropna()
 
     indep_v = df[columna_indep].values
 

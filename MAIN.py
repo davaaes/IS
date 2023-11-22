@@ -2,25 +2,25 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 
-import lectorcsv as l
+import lector as l
 from modelos import *
 global estados_checkbuttons, opcion_seleccionada 
 
 
 def mostrar_modelo():
-    global estados_checkbuttons, opcion_seleccionada,columnas
+    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe
     lista_vo=[opcion_seleccionada.get()]
     list_vi=[]
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,archivo)
+    regresion(lista_vo,list_vi,dataframe)
 
 
 
     
 def cargar_archivo():
-    global archivo
+    global archivo,dataframe
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
     if archivo:
         entrada_texto.config(state='normal')  # Habilitar el cuadro de texto
