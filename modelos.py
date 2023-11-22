@@ -46,7 +46,6 @@ def regresion(columna_indep,columnas_dep,archivo):
     coef = reg.coef_
     interc ="{:.4f}".format(reg.intercept_[0])
     
-    "{:.8f}".format(reg.intercept_[0])
     for i  in range(len(coef[0])):
         print("Beta " , str(i+1) ," =","{:.8f}".format(coef[0][i]))
         coef[0][i] = "{:.8f}".format(coef[0][i])
@@ -57,6 +56,7 @@ def regresion(columna_indep,columnas_dep,archivo):
 
 
     if len(columnas_dep) == 1 :
+        fig =plt.figure()
         plt.scatter(X1, Y1, label='Datos' , s = 10)
         plt.plot(X1, y_pred, color='red', label='Línea de regresión')
         plt.xlabel(str(columna_indep[0]).upper())
@@ -64,7 +64,8 @@ def regresion(columna_indep,columnas_dep,archivo):
         leyend = "Y = "+ "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
         plt.legend(title = leyend,title_fontsize =8    )
         plt.title('Regresión Lineal Simple')
-        plt.show()
+        return fig
+        
 
     elif len(columnas_dep) == 2:
 
@@ -83,7 +84,7 @@ def regresion(columna_indep,columnas_dep,archivo):
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
         leyend = "Y = "+ "(" +str(  coef[0][0] ) + ")"+"*x1 + " + "(" + str(  coef[0][0]  ) +")" +"*x2 +"+"("  + str(   interc  ) + ")"
         ax.legend(loc = 9,title_fontsize = 8 , title = leyend  )
-        plt.show()
+        return fig
 
     elif len(columnas_dep) > 2:
         
@@ -96,3 +97,10 @@ def regresion(columna_indep,columnas_dep,archivo):
             
     
 
+archivo = "housing.db"
+c_i = ["latitude"]
+
+c_ds = ["longitude"]
+
+regresion(c_i,c_ds,archivo)
+plt.show()
