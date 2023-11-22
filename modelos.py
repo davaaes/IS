@@ -41,21 +41,28 @@ def regresion(columna_indep,columnas_dep,archivo):
     print("-"*36)
     print("r2 es : ", r2)
     print("-"*36)
+
+
     coef = reg.coef_
+    interc ="{:.4f}".format(reg.intercept_[0])
     
+    "{:.8f}".format(reg.intercept_[0])
     for i  in range(len(coef[0])):
-        print("Beta " , str(i+1) ," =",coef[0][i])
+        print("Beta " , str(i+1) ," =","{:.8f}".format(coef[0][i]))
+        coef[0][i] = "{:.8f}".format(coef[0][i])
     print("-"*36)
-    print('Independent term: \n', reg.intercept_)
+    print('Término independiente: ', interc)
+    print("-"*36)
     
 
 
     if len(columnas_dep) == 1 :
-        plt.scatter(X1, Y1, label='Datos reales' , s = 10)
+        plt.scatter(X1, Y1, label='Datos' , s = 10)
         plt.plot(X1, y_pred, color='red', label='Línea de regresión')
         plt.xlabel(str(columna_indep[0]).upper())
         plt.ylabel(str(columnas_dep[0]).upper())
-        plt.legend()
+        leyend = "Y = "+ "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
+        plt.legend(title = leyend,title_fontsize =8    )
         plt.title('Regresión Lineal Simple')
         plt.show()
 
@@ -74,13 +81,23 @@ def regresion(columna_indep,columnas_dep,archivo):
         y_pred = reg.predict(np.vstack((x1_mesh.ravel(), x2_mesh.ravel())).T)
         y_pred = y_pred.reshape(x1_mesh.shape)
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
+        leyend = "Y = "+ "(" +str(  coef[0][0] ) + ")"+"*x1 + " + "(" + str(  coef[0][0]  ) +")" +"*x2 +"+"("  + str(   interc  ) + ")"
+        ax.legend(loc = 9,title_fontsize = 8 , title = leyend  )
         plt.show()
 
-
-
+    elif len(columnas_dep) > 2:
+        
+        formul = "Y = "
+        for i in range(len(coef[0])):
+            formul += ("(" + str(coef[0][i])+")" + "*x" + str(i+1) + " + ") 
+        formul += "("  + str(   interc  ) + ")"
+        print("Fórmula: \n",formul)
+        print("-"*36)
+            
+    
 
 archivo = "housing.db"
 columna_indep =['latitude']
-columnas_dep = ['longitude','total_rooms','population']
+columnas_dep = ['total_rooms','longitude','population','households']
 
 regresion(columna_indep,columnas_dep,archivo)
