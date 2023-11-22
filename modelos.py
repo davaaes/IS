@@ -96,8 +96,3 @@ def regresion(columna_indep,columnas_dep,archivo):
             
     
 
-archivo = "housing.db"
-columna_indep =['latitude']
-columnas_dep = ['total_rooms','longitude','population','households']
-
-regresion(columna_indep,columnas_dep,archivo)
