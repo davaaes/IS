@@ -49,7 +49,7 @@ def cargar_archivo():
 
             # Crear un Frame para la tabla
             frame_tabla = tk.Frame(ventana)
-            frame_tabla.pack(pady=20, padx=20)
+            frame_tabla.pack(pady=10, padx=10)
 
             # Crear un Treeview para mostrar la tabla
             treeview = ttk.Treeview(frame_tabla)
@@ -79,9 +79,10 @@ def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
     global estados_checkbuttons, opcion_seleccionada,columnas 
-
+    frame_but2 = tk.Frame(ventana)
+    frame_but2.pack(padx=10,pady=3)
     frame_but = tk.Frame(ventana)
-    frame_but.pack(pady=10, padx=10)
+    frame_but.pack(pady=10, padx=3)
     datos=l.leer_archivo(archivo)
     columnas = list(datos.columns)
 
@@ -113,17 +114,15 @@ def crear_checkbuttons():
         chk.grid(row=1,column=0,sticky='w')
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
         radiobutton.grid(row=1, column=i+1, sticky="w")
-    boton_cargar = tk.Button(frame_but, text="MOSTRAR MODELO", command=mostrar_modelo)
-    boton_cargar.grid(row=2,column=5,padx=10,pady=5)
-    boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO", command=guardar_modelo)
-    boton_guardar.grid(row=2,column=6,padx=10,pady=5)
-    boton_cerrar = tk.Button(frame_but, text="Cerrar Programa", command=cerrar_programa)
-    boton_cerrar.grid(row=2,column=10,padx=10,pady=5)
+    boton_cargar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
+    boton_cargar.grid(row=2,column=5,pady=5)
+    boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
+    boton_guardar.grid(row=2,column=6,pady=5,padx=5)
     texto=tk.StringVar()
-    etiqueta=tk.Label(frame_but,text='como')
-    etiqueta.grid(row=2,column=7,pady=10)
-    pantalla=tk.Entry(frame_but, textvariable=texto)
-    pantalla.grid(row=2,column=7,pady=10,columnspan=3,rowspan=2)
+    etiqueta=tk.Label(frame_but2,text='Como:')
+    etiqueta.grid(row=2,column=7)
+    pantalla=tk.Entry(frame_but2, textvariable=texto)
+    pantalla.grid(row=2,column=8,columnspan=3,rowspan=2)
     
 
 
@@ -140,11 +139,13 @@ alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 
 entrada_texto = tk.Entry(ventana, state='disabled', width=40)
-entrada_texto.pack(pady=5)
+entrada_texto.pack(pady=8)
 
 # Botón para cargar un archivo
 boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.place(x=400,y=2)
+boton_cerrar = tk.Button(ventana, text="Cerrar Programa", command=cerrar_programa)
+boton_cerrar.place(x=1172,y=2)
 
 
 
