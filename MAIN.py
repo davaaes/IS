@@ -104,6 +104,7 @@ def crear_checkbuttons():
     boton_guardar = tk.Button(frame_but, text="GUARDAR MODELO COMO")
     boton_guardar.grid(row=2,column=6,padx=10,pady=5)
 
+
 # Crear ventana y otros elementos
 
 
