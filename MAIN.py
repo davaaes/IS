@@ -36,7 +36,8 @@ def guardar_modelo():
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,dataframe,"sacadon.png")
+    print(texto)
+    regresion(lista_vo,list_vi,dataframe,str(texto.get()) +".png")
 
 def cerrar_programa():
     sys.exit()
@@ -89,7 +90,7 @@ def cargar_archivo():
 def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
-    global estados_checkbuttons, opcion_seleccionada,columnas 
+    global estados_checkbuttons, opcion_seleccionada,columnas, texto
     frame_but2 = tk.Frame(ventana)
     frame_but2.pack(padx=10,pady=3)
     frame_but = tk.Frame(ventana)
