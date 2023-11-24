@@ -15,7 +15,18 @@ def mostrar_modelo():
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,dataframe,)
+    if len(list_vi)==0:
+        tk.messagebox.showerror("Error", "Seleccione al menos una variable independiente.")
+        return
+
+    # Verificar si se ha seleccionado una variable objetivo
+    if not opcion_seleccionada.get():
+        tk.messagebox.showerror("Error", "Seleccione una variable objetivo.")
+        return
+    if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
+        tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
+        return
+    regresion(lista_vo,list_vi,dataframe)
 
 
 def guardar_modelo():
