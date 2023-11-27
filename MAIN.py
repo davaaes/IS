@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 import sys
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import lector as l
 from modelos import *
 
@@ -26,9 +27,16 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
-    regresion(lista_vo,list_vi,dataframe)
+    plot_grafico(lista_vo,list_vi,dataframe)
 
+def plot_grafico(columna_indep, columnas_dep, df, name=None):
+    # Obtiene los datos para graficar desde la función de regresión
+    fig = regresion(columna_indep, columnas_dep, df, name)
 
+    # Crea el lienzo de Tkinter para la figura de Matplotlib
+    canvas = FigureCanvasTkAgg(fig, master=ventana)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 def guardar_modelo():
     global dataframe, opcion_seleccionada,estados_checkbuttons
     lista_vo=[opcion_seleccionada.get()]

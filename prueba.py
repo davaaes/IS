@@ -1,15 +1,15 @@
-import sklearn as sk 
-import matplotlib.pylab as plt
-import pandas as pd
-import seaborn as sb
+import tkinter as tk
+from tkinter import filedialog
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 from sklearn.linear_model import LinearRegression
-from matplotlib.figure import Figure
 from sklearn.metrics import mean_squared_error
-from mpl_toolkits.mplot3d import Axes3D 
-from lector import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import lector as l
 
-
+# Función de regresión
 def regresion(columna_indep, columnas_dep, df, name=None):
     df = df.dropna()
     indep_v = df[columna_indep].values
@@ -76,11 +76,39 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             fig.savefig(name)
         else:
             return fig
-    elif len(columnas_dep) > 2:
-        
-        formul = "Y = "
-        for i in range(len(coef[0])):
-            formul += ("(" + str(coef[0][i])+")" + "*x" + str(i+1) + " + ") 
-        formul += "("  + str(   interc  ) + ")"
-        print("Fórmula: \n",formul)
-        print("-"*36)
+
+# Función para plotear gráfico en Tkinter
+def plot_grafico(columna_indep, columnas_dep, df, name=None):
+    # Obtiene los datos para graficar desde la función de regresión
+    fig = regresion(columna_indep, columnas_dep, df, name)
+
+    # Crea el lienzo de Tkinter para la figura de Matplotlib
+    canvas = FigureCanvasTkAgg(fig, master=ventana)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
+
+# Crea la ventana principal
+ventana = tk.Tk()
+ancho_pantalla = ventana.winfo_screenwidth()
+alto_pantalla = ventana.winfo_screenheight()
+ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
+ventana.title("Interfaz con Gráfico")
+
+# Función que se llama cuando se presiona el botón
+def generar_grafico():
+    # Selecciona las columnas para la regresión y el nombre del archivo (si es necesario)
+    columna_indep = ["latitude"]
+    columnas_dep = ["latitude",'longitude']
+    df = l.leer_archivo("housing.xlsx")
+    name = None
+
+    # Llama a la función para graficar
+    plot_grafico(columna_indep, columnas_dep, df, name)
+
+# Agrega un botón para generar la gráfica
+boton_grafico = tk.Button(ventana, text="Generar Gráfico", command=generar_grafico)
+boton_grafico.pack(side=tk.TOP)  # Ubicado en la parte superior
+
+# Ejecuta el bucle principal de la interfaz
+ventana.mainloop()
+
