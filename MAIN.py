@@ -32,9 +32,11 @@ def mostrar_modelo():
 def plot_grafico(columna_indep, columnas_dep, df, name=None):
     # Obtiene los datos para graficar desde la función de regresión
     fig = regresion(columna_indep, columnas_dep, df, name)
-
+    fig.set_size_inches(8, 4)
+    frame_grafica = tk.Frame(ventana,width=600, height=400)
+    frame_grafica.pack(pady=10, padx=10)
     # Crea el lienzo de Tkinter para la figura de Matplotlib
-    canvas = FigureCanvasTkAgg(fig, master=ventana)
+    canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
     canvas.draw()
     canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 def guardar_modelo():
@@ -48,8 +50,6 @@ def guardar_modelo():
 
 def cerrar_programa():
     sys.exit()
-
-
 
     
 def cargar_archivo():
