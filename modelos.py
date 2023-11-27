@@ -9,7 +9,6 @@ from sklearn.metrics import mean_squared_error
 from mpl_toolkits.mplot3d import Axes3D 
 from lector import *
 
-
 def regresion(columna_indep, columnas_dep, df, name=None):
     df = df.dropna()
     indep_v = df[columna_indep].values
@@ -52,7 +51,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig
+            return fig,error,leyend
 
     elif len(columnas_dep) == 2:
         fig = Figure(figsize=(4, 3), dpi=100)
@@ -75,7 +74,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig
+            return fig,error,leyend
     elif len(columnas_dep) > 2:
         
         formul = "Y = "

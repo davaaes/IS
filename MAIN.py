@@ -27,18 +27,23 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
-    plot_grafico(lista_vo,list_vi,dataframe)
+    fig,error,formula= regresion(lista_vo, list_vi, dataframe)
+    mostrar_formula(error,formula)
+    plot_grafico(fig)
 
-def plot_grafico(columna_indep, columnas_dep, df, name=None):
-    # Obtiene los datos para graficar desde la función de regresión
-    fig = regresion(columna_indep, columnas_dep, df, name)
-    fig.set_size_inches(8, 4)
-    frame_grafica = tk.Frame(ventana,width=600, height=400)
+def mostrar_formula(error,formula):
+    formula_error = tk.Label(ventana, text=f"Formula={formula}\nError={error}")
+    formula_error.pack()
+
+def plot_grafico(fig):
+    fig.set_size_inches(6, 3)
+    frame_grafica = tk.Frame(ventana,width=500, height=300)
     frame_grafica.pack(pady=10, padx=10)
     # Crea el lienzo de Tkinter para la figura de Matplotlib
     canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
     canvas.draw()
     canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
+
 def guardar_modelo():
     global dataframe, opcion_seleccionada,estados_checkbuttons
     lista_vo=[opcion_seleccionada.get()]
@@ -50,8 +55,7 @@ def guardar_modelo():
 
 def cerrar_programa():
     sys.exit()
-
-    
+ 
 def cargar_archivo():
     global archivo,dataframe
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
@@ -94,6 +98,7 @@ def cargar_archivo():
             # Centrar la tabla en el Frame
             treeview.pack()
     crear_checkbuttons()
+
 def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
@@ -144,12 +149,7 @@ def crear_checkbuttons():
     pantalla.grid(row=2,column=8,columnspan=3,rowspan=2)
     
 
-
 # Crear ventana y otros elementos
-
-
-
-
 
 ventana = tk.Tk()
 
@@ -165,9 +165,6 @@ boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.place(x=400,y=2)
 boton_cerrar = tk.Button(ventana, text="Cerrar Programa", command=cerrar_programa)
 boton_cerrar.place(x=1172,y=2)
-
-
-
 
 ventana.mainloop()
 
