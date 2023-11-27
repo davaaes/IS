@@ -27,17 +27,31 @@ def mostrar_modelo():
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
     regresion(lista_vo,list_vi,dataframe)
-
-
+    
 def guardar_modelo():
-    global dataframe, opcion_seleccionada,estados_checkbuttons
-    lista_vo=[opcion_seleccionada.get()]
-    list_vi=[]
+    global dataframe, opcion_seleccionada, estados_checkbuttons, texto, columnas
+    lista_vo = [opcion_seleccionada.get()]
+    list_vi = []
+
     for i in range(len(estados_checkbuttons)):
-        if estados_checkbuttons[i].get()==True:
+        if estados_checkbuttons[i].get() == True:
             list_vi.append(columnas[i])
-    print(texto)
-    regresion(lista_vo,list_vi,dataframe,str(texto.get()) +".png")
+
+    
+    modelo = Modelo()
+    modelo.entrenar_modelo(lista_vo, list_vi, dataframe)
+
+    filename = str(texto.get()) + ".joblib"
+    modelo.guardar_modelo(filename)
+
+    loaded_model = joblib.load(filename)
+    
+
+    print(f"Modelo guardado en {filename}")
+    print("Coeficientes:", loaded_model.coef_)
+    print("Término independiente:", loaded_model.intercept_)
+
+
 
 def cerrar_programa():
     sys.exit()
@@ -163,4 +177,4 @@ boton_cerrar.place(x=1172,y=2)
 
 
 ventana.mainloop()
-
+guardar_modelo()
