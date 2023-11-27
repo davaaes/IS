@@ -11,6 +11,7 @@ global estados_checkbuttons, opcion_seleccionada
 
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas,dataframe
+    limpiar_interfaz(2)
     lista_vo=[opcion_seleccionada.get()]
     list_vi=[]
     for i in range(len(estados_checkbuttons)):
@@ -32,13 +33,11 @@ def mostrar_modelo():
     plot_grafico(fig)
 
 def mostrar_formula(error,formula):
-    formula_error = tk.Label(ventana, text=f"Formula={formula}\nError={error}")
+    formula_error = tk.Label(frame_grafica, text=f"Formula={formula}\nError={error}")
     formula_error.pack()
 
 def plot_grafico(fig):
     fig.set_size_inches(6, 3)
-    frame_grafica = tk.Frame(ventana,width=500, height=300)
-    frame_grafica.pack(pady=10, padx=10)
     # Crea el lienzo de Tkinter para la figura de Matplotlib
     canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
     canvas.draw()
@@ -69,11 +68,7 @@ def cargar_archivo():
         dataframe = l.leer_archivo(archivo)
 
         if dataframe is not None:
-
-            # Crear un Frame para la tabla
-            frame_tabla = tk.Frame(ventana)
-            frame_tabla.pack(pady=10, padx=10)
-
+            limpiar_interfaz(1)
             # Crear un Treeview para mostrar la tabla
             treeview = ttk.Treeview(frame_tabla)
             treeview["columns"] = tuple(dataframe.columns)
@@ -103,10 +98,6 @@ def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
     global estados_checkbuttons, opcion_seleccionada,columnas 
-    frame_but2 = tk.Frame(ventana)
-    frame_but2.pack(padx=10,pady=3)
-    frame_but = tk.Frame(ventana)
-    frame_but.pack(pady=10, padx=3)
     datos=l.leer_archivo(archivo)
     columnas = list(datos.columns)
 
@@ -148,7 +139,19 @@ def crear_checkbuttons():
     pantalla=tk.Entry(frame_but2, textvariable=texto)
     pantalla.grid(row=2,column=8,columnspan=3,rowspan=2)
     
-
+def limpiar_interfaz(n):
+    if n==1:
+        for widget in frame_tabla.winfo_children():
+            widget.destroy()
+        for widget in frame_grafica.winfo_children():
+            widget.destroy()
+        for widget in frame_but2.winfo_children():
+            widget.destroy()
+        for widget in frame_but.winfo_children():
+            widget.destroy()
+    elif n==2:
+        for widget in frame_grafica.winfo_children():
+            widget.destroy()
 # Crear ventana y otros elementos
 
 ventana = tk.Tk()
@@ -160,11 +163,25 @@ ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 entrada_texto = tk.Entry(ventana, state='disabled', width=40)
 entrada_texto.pack(pady=8)
 
+# Crear un Frame para la tabla
+frame_tabla = tk.Frame(ventana)
+frame_tabla.pack(pady=10, padx=10)
+
+# Crear un Frame para los botones de variables
+frame_but2 = tk.Frame(ventana)
+frame_but2.pack(padx=10,pady=3)
+frame_but = tk.Frame(ventana)
+frame_but.pack(pady=10, padx=3)
+
 # Botón para cargar un archivo
 boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
 boton_cargar.place(x=400,y=2)
 boton_cerrar = tk.Button(ventana, text="Cerrar Programa", command=cerrar_programa)
 boton_cerrar.place(x=1172,y=2)
+
+# Crear un Frame para la grafica
+frame_grafica = tk.Frame(ventana,width=500, height=300)
+frame_grafica.pack(pady=10, padx=10)
 
 ventana.mainloop()
 
