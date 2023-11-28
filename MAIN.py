@@ -28,7 +28,7 @@ def mostrar_modelo():
         return
     regresion(lista_vo,list_vi,dataframe)
     
-def guardar_modelo():
+def guardarModelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons, texto, columnas
     lista_vo = [opcion_seleccionada.get()]
     list_vi = []
@@ -37,16 +37,13 @@ def guardar_modelo():
         if estados_checkbuttons[i].get() == True:
             list_vi.append(columnas[i])
 
-    
+   
     modelo = Modelo()
     modelo.entrenar_modelo(lista_vo, list_vi, dataframe)
-
     filename = str(texto.get()) + ".joblib"
     modelo.guardar_modelo(filename)
 
     loaded_model = joblib.load(filename)
-    
-
     print(f"Modelo guardado en {filename}")
     print("Coeficientes:", loaded_model.coef_)
     print("Término independiente:", loaded_model.intercept_)
@@ -142,7 +139,7 @@ def crear_checkbuttons():
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,pady=5)
-    boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
+    boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardarModelo)
     boton_guardar.grid(row=2,column=6,pady=5,padx=5)
     texto=tk.StringVar()
     etiqueta=tk.Label(frame_but2,text='Como:')
@@ -177,4 +174,4 @@ boton_cerrar.place(x=1172,y=2)
 
 
 ventana.mainloop()
-guardar_modelo()
+guardarModelo()

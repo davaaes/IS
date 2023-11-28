@@ -16,7 +16,7 @@ class Modelo:
             self.modelo = None
 
         def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            self.modelo = regresion_m(columna_indep, columnas_dep, df)
+            self.modelo = regresion(columna_indep, columnas_dep, df)
 
         def predecir(self, X):
             if self.modelo is not None:
@@ -32,31 +32,13 @@ class Modelo:
 
         def cargar_modelo(self, filename):
             self.modelo = joblib.load(filename)
+        
+    
 
 
-def regresion_m(columna_indep, columnas_dep, df, name=None):
-    # Eliminar filas con NaN en las columnas seleccionadas
-    df = df.dropna(subset=[*columna_indep, *columnas_dep])
 
-    indep_v = df[columna_indep].values
-    x = len(columnas_dep)
-    dep_v = []
 
-    for i in range(x):
-        valores = df[columnas_dep[i]].values
-        dep_v.append(valores)
 
-    X1 = np.array(dep_v).T
-    Y1 = np.array(indep_v)
-
-    # Imputar valores NaN si es necesario
-    imputer = SimpleImputer(strategy='mean')  # Puedes ajustar la estrategia según tus necesidades
-    X1 = imputer.fit_transform(X1)
-
-    reg = LinearRegression()
-    reg = reg.fit(X1, Y1)
-
-    return reg
 def regresion(columna_indep, columnas_dep, df, name=None):    
     
     df = df.dropna()
@@ -146,6 +128,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         formul += "(" + str(interc) + ")"
         print("Fórmula: \n", formul)
         print("-" * 36)
+    return reg
 
 
 
