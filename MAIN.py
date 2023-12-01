@@ -130,9 +130,9 @@ def crear_checkbuttons():
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
-    boton_cargar.grid(row=2,column=5,pady=5)
+    boton_cargar.grid(row=2,column=5,pady=3)
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
-    boton_guardar.grid(row=2,column=6,pady=5,padx=5)
+    boton_guardar.grid(row=2,column=6,pady=3,padx=5)
     texto=tk.StringVar()
     etiqueta=tk.Label(frame_but2,text='Como:')
     etiqueta.grid(row=2,column=7)
@@ -161,27 +161,27 @@ alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 
 entrada_texto = tk.Entry(ventana, state='disabled', width=40)
-entrada_texto.pack(pady=8)
+entrada_texto.pack(pady=5)
 
 # Crear un Frame para la tabla
 frame_tabla = tk.Frame(ventana)
-frame_tabla.pack(pady=10, padx=10)
+frame_tabla.pack(pady=5, padx=10)
 
 # Crear un Frame para los botones de variables
 frame_but2 = tk.Frame(ventana)
 frame_but2.pack(padx=10,pady=3)
 frame_but = tk.Frame(ventana)
-frame_but.pack(pady=10, padx=3)
+frame_but.pack(pady=5, padx=3)
 
 # Botón para cargar un archivo
-boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
-boton_cargar.place(x=400,y=2)
-boton_cerrar = tk.Button(ventana, text="Cerrar Programa", command=cerrar_programa)
-boton_cerrar.place(x=1172,y=2)
+boton_cargar = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
+boton_cargar.place(x=790,y=2)
+ruta= tk.Label(ventana, text='Ruta:')
+ruta.place(x=480,y=5)
 
 # Crear un Frame para la grafica
-frame_grafica = tk.Frame(ventana,width=500, height=300)
-frame_grafica.pack(pady=10, padx=10)
+frame_grafica = tk.Frame(ventana,width=400, height=200)
+frame_grafica.pack(pady=5, padx=10)
 
 ventana.mainloop()
 
