@@ -48,12 +48,37 @@ def guardarModelo():
     print("Coeficientes:", loaded_model.coef_)
     print("Término independiente:", loaded_model.intercept_)
 
+def cargarModelo():
+    # Abrir un cuadro de diálogo para seleccionar el archivo del modelo
+    filename = filedialog.askopenfilename(title="Seleccionar modelo")
+    
+    if filename:
+        # Crear una instancia de la clase Modelo
+        modelo = Modelo()
+        
+        # Cargar el modelo desde el archivo especificado
+        modelo.cargar_modelo(filename)
+        
+        # Obtener los coeficientes y el término independiente
+        coeficientes = modelo.modelo.coef_
+        intercep = modelo.modelo.intercept_[0]
 
+        # Crear la cadena de texto que representa la ecuación del modelo
+        ecuacion = "Y = "
+        for i, coef in enumerate(coeficientes[0]):
+            ecuacion += f"({coef:.4f})*x{i+1} + "
+        ecuacion = ecuacion[:-2]  # Eliminar el último "+"
+        ecuacion += f" + ({intercep:.4f})"
+
+        # Crear una etiqueta para mostrar la ecuación en la ventana principal
+        ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
+        ecuacion_label.pack()
+        ecuacion_text = tk.Text(ventana, height=1, width=60)
+        ecuacion_text.insert(tk.END, str(ecuacion))
+        ecuacion_text.pack()
 
 def cerrar_programa():
     sys.exit()
-
-
 
     
 def cargar_archivo():
@@ -137,8 +162,8 @@ def crear_checkbuttons():
         chk.grid(row=1,column=0,sticky='w')
         radiobutton = ttk.Radiobutton(frame_but, text=columna, variable=opcion_seleccionada, value=columna)
         radiobutton.grid(row=1, column=i+1, sticky="w")
-    boton_cargar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
-    boton_cargar.grid(row=2,column=5,pady=5)
+    boton_mostrar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
+    boton_mostrar.grid(row=2,column=5,pady=5)
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardarModelo)
     boton_guardar.grid(row=2,column=6,pady=5,padx=5)
     texto=tk.StringVar()
@@ -164,11 +189,14 @@ ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 entrada_texto = tk.Entry(ventana, state='disabled', width=40)
 entrada_texto.pack(pady=8)
 
-# Botón para cargar un archivo
-boton_cargar = tk.Button(ventana, text="Cargar Archivo", command=cargar_archivo)
-boton_cargar.place(x=400,y=2)
-boton_cerrar = tk.Button(ventana, text="Cerrar Programa", command=cerrar_programa)
-boton_cerrar.place(x=1172,y=2)
+# Botón para elegir y cargar un archivo
+boton_elegir = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
+boton_elegir.place(x=400,y=2)
+
+boton_cargar = tk.Button(ventana, text="Cargar Modelo", command=cargarModelo)
+boton_cargar.place(x=1172,y=2)
+
+ventana.protocol("WM_DELETE_WINDOW", cerrar_programa)
 
 
 
