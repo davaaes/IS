@@ -44,7 +44,6 @@ def mostrar_formula(error,formula,n):
 
     formula_error.pack()
 
-
 def plot_grafico(fig):
     fig.set_size_inches(6, 3)
     # Crea el lienzo de Tkinter para la figura de Matplotlib
@@ -87,6 +86,7 @@ def guardar_modelo():
     model = regresion(lista_vo, list_vi, dataframe)
     joblib.dump(model, file_path)
     tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
+
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas
     # Seleccionar un archivo de modelo previamente guardado
@@ -115,10 +115,7 @@ def cargarModelo():
         ecuacion_text = tk.Text(ventana, height=1, width=60)
         ecuacion_text.insert(tk.END, str(ecuacion))
         ecuacion_text.pack()
-    
-        
-
-    
+       
 def cerrar_programa():
     sys.exit()
  
@@ -237,7 +234,7 @@ frame_but.pack(pady=5, padx=3)
 
 # Botón para cargar un archivo
 boton_elegir = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
-boton_elegir.place(x=790,y=2)
+boton_elegir.place(x=1000,y=2)
 boton_cargar = tk.Button(ventana, text="Cargar modelo",command=cargarModelo)
 boton_cargar.place(x=1200,y=2)
 # Crear un Frame para la grafica

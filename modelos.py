@@ -8,6 +8,32 @@ from matplotlib.figure import Figure
 from sklearn.metrics import mean_squared_error
 from mpl_toolkits.mplot3d import Axes3D 
 from lector import *
+import joblib
+from sklearn.impute import SimpleImputer
+
+
+class Modelo:
+        def __init__(self):
+            self.modelo = None
+
+        def entrenar_modelo(self, columna_indep, columnas_dep, df):
+            self.modelo = regresion(columna_indep, columnas_dep, df)
+
+        def predecir(self, X):
+            if self.modelo is not None:
+                return self.modelo.predict(X)
+            else:
+                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+
+        def guardar_modelo(self, filename):
+            if self.modelo is not None:
+                joblib.dump(self.modelo, filename)
+            else:
+                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+
+        def cargar_modelo(self, filename):
+            self.modelo = joblib.load(filename)
+        
 
 def regresion(columna_indep, columnas_dep, df, name=None):
     df = df.dropna()
