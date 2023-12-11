@@ -5,12 +5,14 @@ import sys
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import lector as l
 from modelos import *
+import joblib
 
 global estados_checkbuttons, opcion_seleccionada 
 
 
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas,dataframe
+    n=1
     limpiar_interfaz(2)
     lista_vo=[opcion_seleccionada.get()]
     list_vi=[]
@@ -29,12 +31,19 @@ def mostrar_modelo():
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
     fig,error,formula= regresion(lista_vo, list_vi, dataframe)
-    mostrar_formula(error,formula)
+    mostrar_formula(error,formula,n)
     plot_grafico(fig)
 
-def mostrar_formula(error,formula):
-    formula_error = tk.Label(frame_grafica, text=f"Formula={formula}\nError={error}")
+def mostrar_formula(error,formula,n):
+    contenido = f"Formula={formula}\nError={error}"
+
+    if n==1:
+        formula_error = tk.Label(frame_grafica, text=f"Formula={formula}\nError={error}")
+    else:
+        formula_error = tk.Label(text=f"Formula={formula}\nError={error}")
+
     formula_error.pack()
+
 
 def plot_grafico(fig):
     fig.set_size_inches(6, 3)
@@ -44,14 +53,72 @@ def plot_grafico(fig):
     canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
 
 def guardar_modelo():
-    global dataframe, opcion_seleccionada,estados_checkbuttons
-    lista_vo=[opcion_seleccionada.get()]
-    list_vi=[]
-    for i in range(len(estados_checkbuttons)):
-        if estados_checkbuttons[i].get()==True:
-            list_vi.append(columnas[i])
-    regresion(lista_vo,list_vi,dataframe,"sacadon.png")
+    global dataframe, opcion_seleccionada, estados_checkbuttons
 
+    lista_vo = [opcion_seleccionada.get()]
+    list_vi = []
+    for i in range(len(estados_checkbuttons)):
+        if estados_checkbuttons[i].get() == True:
+            list_vi.append(columnas[i])
+
+    if len(list_vi) == 0:
+        tk.messagebox.showerror("Error", "Seleccione al menos una variable independiente.")
+        return
+
+    if not opcion_seleccionada.get():
+        tk.messagebox.showerror("Error", "Seleccione una variable objetivo.")
+        return
+
+    if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
+        tk.messagebox.showerror(
+            "Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto."
+        )
+        return
+
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".joblib",
+        filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")],
+        title="Guardar Modelo",
+    )
+
+    if not file_path:
+        return  
+
+    model = regresion(lista_vo, list_vi, dataframe)
+    joblib.dump(model, file_path)
+    tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
+def cargarModelo():
+    global opcion_seleccionada, estados_checkbuttons, dataframe, columnas
+    # Seleccionar un archivo de modelo previamente guardado
+    filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
+    if filename is not None:
+            # Crear una instancia de la clase Modelo
+        modelo = Modelo()
+        
+        # Cargar el modelo desde el archivo especificado
+        modelo.cargar_modelo(filename)
+        
+        # Obtener los coeficientes y el término independiente
+        coeficientes = modelo.modelo.coef_
+        intercep = modelo.modelo.intercept_[0]
+
+        # Crear la cadena de texto que representa la ecuación del modelo
+        ecuacion = "Y = "
+        for i, coef in enumerate(coeficientes[0]):
+            ecuacion += f"({coef:.4f})*x{i+1} + "
+        ecuacion = ecuacion[:-2]  # Eliminar el último "+"
+        ecuacion += f" + ({intercep:.4f})"
+
+        # Crear una etiqueta para mostrar la ecuación en la ventana principal
+        ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
+        ecuacion_label.pack()
+        ecuacion_text = tk.Text(ventana, height=1, width=60)
+        ecuacion_text.insert(tk.END, str(ecuacion))
+        ecuacion_text.pack()
+    
+        
+
+    
 def cerrar_programa():
     sys.exit()
  
@@ -133,11 +200,6 @@ def crear_checkbuttons():
     boton_cargar.grid(row=2,column=5,pady=3)
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
-    texto=tk.StringVar()
-    etiqueta=tk.Label(frame_but2,text='Como:')
-    etiqueta.grid(row=2,column=7)
-    pantalla=tk.Entry(frame_but2, textvariable=texto)
-    pantalla.grid(row=2,column=8,columnspan=3,rowspan=2)
     
 def limpiar_interfaz(n):
     if n==1:
@@ -174,11 +236,10 @@ frame_but = tk.Frame(ventana)
 frame_but.pack(pady=5, padx=3)
 
 # Botón para cargar un archivo
-boton_cargar = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
-boton_cargar.place(x=790,y=2)
-ruta= tk.Label(ventana, text='Ruta:')
-ruta.place(x=480,y=5)
-
+boton_elegir = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
+boton_elegir.place(x=790,y=2)
+boton_cargar = tk.Button(ventana, text="Cargar modelo",command=cargarModelo)
+boton_cargar.place(x=1200,y=2)
 # Crear un Frame para la grafica
 frame_grafica = tk.Frame(ventana,width=400, height=200)
 frame_grafica.pack(pady=5, padx=10)
