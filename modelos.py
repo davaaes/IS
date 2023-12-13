@@ -17,17 +17,18 @@ class Modelo:
             self.modelo = None
 
         def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            self.modelo = regresion(columna_indep, columnas_dep, df)
-
+            fig,error,formula = regresion(columna_indep, columnas_dep, df)
+            self.modelo = (fig, error, formula)
+            return self.modelo
         def predecir(self, X):
             if self.modelo is not None:
                 return self.modelo.predict(X)
             else:
                 raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
-        def guardar_modelo(self, filename):
+        def guardar_modelo(self, path):
             if self.modelo is not None:
-                joblib.dump(self.modelo, filename)
+                joblib.dump(self.modelo,path)
             else:
                 raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
@@ -42,8 +43,12 @@ class Modelo:
                 print(f"Error al cargar el modelo: {e}")
                 return None  # Asegúrate de retornar None si hay un error
 
-        def obtener_modelo_interno(self):
-            return self.modelo
+        def obtener_coeficientes(self):
+            if self.modelo is not None:
+                error, formula = self.modelo
+                return formula.coef_, formula.intercept_
+            else:
+                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
 def regresion(columna_indep, columnas_dep, df, name=None):
     df = df.dropna()
