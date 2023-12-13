@@ -83,9 +83,19 @@ def guardar_modelo():
     if not file_path:
         return  
 
-    model = regresion(lista_vo, list_vi, dataframe)
-    joblib.dump(model, file_path)
-    tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
+    modelo = Modelo()
+
+    # Entrenar el modelo y asignarlo a la instancia
+    modelo.entrenar_modelo(lista_vo, list_vi, dataframe)
+
+    try:
+        # Guardar el modelo utilizando la clase Modelo
+        modelo.guardar_modelo(file_path)
+        tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
+    except Exception as e:
+        tk.messagebox.showerror("Error", f"Error al guardar el modelo: {e}")
+
+  
 
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas
@@ -96,25 +106,33 @@ def cargarModelo():
         modelo = Modelo()
         
         # Cargar el modelo desde el archivo especificado
-        modelo.cargar_modelo(filename)
+        modelo_interno = modelo.cargar_modelo(filename)
+        print("Modelo interno obtenido. Tipo de objeto:", type(modelo_interno))
         
-        # Obtener los coeficientes y el término independiente
-        coeficientes = modelo.modelo.coef_
-        intercep = modelo.modelo.intercept_[0]
+        
+        if modelo_interno is not None:
 
-        # Crear la cadena de texto que representa la ecuación del modelo
-        ecuacion = "Y = "
-        for i, coef in enumerate(coeficientes[0]):
-            ecuacion += f"({coef:.4f})*x{i+1} + "
-        ecuacion = ecuacion[:-2]  # Eliminar el último "+"
-        ecuacion += f" + ({intercep:.4f})"
+            if isinstance(modelo_interno, tuple):
+                modelo_interno = modelo_interno[0] 
+            # Obtener los coeficientes y el término independiente desde el modelo interno
+            coeficientes = modelo_interno.coef_
+            intercepto = modelo_interno.intercept_[0]
 
-        # Crear una etiqueta para mostrar la ecuación en la ventana principal
-        ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
-        ecuacion_label.pack()
-        ecuacion_text = tk.Text(ventana, height=1, width=60)
-        ecuacion_text.insert(tk.END, str(ecuacion))
-        ecuacion_text.pack()
+            # Crear la cadena de texto que representa la ecuación del modelo
+            ecuacion = "Y = "
+            for i, coef in enumerate(coeficientes):
+                ecuacion += f"({coef:.4f})*x{i+1} + "
+            ecuacion = ecuacion[:-2]  # Eliminar el último "+"
+            ecuacion += f" + ({intercepto:.4f})"
+
+            # Crear una etiqueta para mostrar la ecuación en la ventana principal
+            ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
+            ecuacion_label.pack()
+            ecuacion_text = tk.Text(ventana, height=1, width=60)
+            ecuacion_text.insert(tk.END, str(ecuacion))
+            ecuacion_text.pack()
+        else:
+            print("El modelo interno es None. Revisa la carga del modelo.")
        
 def cerrar_programa():
     sys.exit()

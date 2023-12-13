@@ -31,9 +31,19 @@ class Modelo:
             else:
                 raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
-        def cargar_modelo(self, filename):
-            self.modelo = joblib.load(filename)
-        
+        def cargar_modelo(self, path):
+            try:
+            # Carga el modelo desde el archivo
+                modelo_cargado = joblib.load(path)
+                self.modelo = modelo_cargado
+                print("Modelo cargado correctamente. Tipo de objeto:", type(self.modelo))
+                return self.modelo
+            except Exception as e:
+                print(f"Error al cargar el modelo: {e}")
+                return None  # Asegúrate de retornar None si hay un error
+
+        def obtener_modelo_interno(self):
+            return self.modelo
 
 def regresion(columna_indep, columnas_dep, df, name=None):
     df = df.dropna()
