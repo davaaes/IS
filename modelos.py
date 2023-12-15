@@ -118,9 +118,40 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             return fig,error,leyend
     elif len(columnas_dep) > 2:
         
-        formul = "Y = "
+        fig, axs = plt.subplots(len(columnas_dep), 1, figsize=(10, 15))
+        
+        formul = "Y = " 
         for i in range(len(coef[0])):
             formul += ("(" + str(coef[0][i])+")" + "*x" + str(i+1) + " + ") 
         formul += "("  + str(   interc  ) + ")"
-        print("Fórmula: \n",formul)
-        print("-"*36)
+
+        def f(n,coef,intercept):
+            x = 0
+            for i in range(len(n)):
+                x += n[i] * coef[0][i]
+            x += intercept
+            return x
+
+        
+        l = []
+        for i in range(len(coef[0])):
+            l.append(0)
+        
+        y1 = np.linspace(min(Y1),max(Y1),len(Y1))
+        print(Y1)
+        print(y1)
+        for i in range(len(l)):
+            l[i] = y1
+            z_values = f(l,coef,reg.intercept_[0])
+            axs[i].plot(y1,z_values)
+            title = "GRÁFICO " + str(i) + ": " + (str(columnas_dep[i]).upper()) + " y " + (str(columna_indep[0]).upper())
+            axs[i].set_title(title,fontsize = 6)
+            l[i] = 0
+            
+
+        plt.subplots_adjust(hspace = 0.5)
+        
+        if name is not None:
+            fig.savefig(name)
+        else:
+            return fig,error,formul
