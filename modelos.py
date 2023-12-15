@@ -86,7 +86,6 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         ax.set_xlabel(str(columna_indep[0]).upper())
         ax.set_ylabel(str(columnas_dep[0]).upper())
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
-        ax.legend(title=leyend, title_fontsize=8)
         ax.set_title('Regresión Lineal Simple')
 
         if name is not None:
@@ -110,7 +109,6 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(coef[0][0]) + ")" + "*x2 +" + "(" + str(
             interc) + ")"
-        ax.legend(loc=9, title_fontsize=8, title=leyend)
 
         if name is not None:
             fig.savefig(name)
