@@ -17,8 +17,8 @@ class Modelo:
             self.modelo = None
 
         def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            fig,error,formula = regresion(columna_indep, columnas_dep, df)
-            self.modelo = (fig, error, formula)
+            fig,error,formula,interc,coef = regresion(columna_indep, columnas_dep, df)
+            self.modelo = (error,interc,coef)
             return self.modelo
         def predecir(self, X):
             if self.modelo is not None:
@@ -92,7 +92,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend
+            return fig,error,leyend,interc,coef
 
     elif len(columnas_dep) == 2:
         fig = Figure(figsize=(4, 3), dpi=100)
@@ -115,7 +115,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend
+            return fig,error,leyend,interc,coef
     elif len(columnas_dep) > 2:
         
         formul = "Y = "

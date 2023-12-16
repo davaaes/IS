@@ -6,6 +6,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import lector as l
 from modelos import *
 import joblib
+from decimal import Decimal, getcontext
+
 
 global estados_checkbuttons, opcion_seleccionada 
 
@@ -102,28 +104,36 @@ def cargarModelo():
     # Seleccionar un archivo de modelo previamente guardado
     filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
     if filename is not None:
-            # Crear una instancia de la clase Modelo
+        # Crear una instancia de la clase Modelo
         modelo = Modelo()
         
         # Cargar el modelo desde el archivo especificado
         modelo_interno = modelo.cargar_modelo(filename)
-        print("Modelo interno obtenido. Tipo de objeto:", type(modelo_interno))
         
         
         if modelo_interno is not None:
-
-            if isinstance(modelo_interno, tuple):
-                modelo_interno = modelo_interno[0] 
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            coeficientes = modelo_interno.coef_
-            intercepto = modelo_interno.intercept_[0]
+            error1, intercepto, coeficientes = modelo_interno
+              # Assuming the intercept is stored in the array
+            coeficientes = coeficientes.flatten().tolist()
 
-            # Crear la cadena de texto que representa la ecuación del modelo
+            # Ahora tendrás tus coeficientes como una lista con comas
+              
+            
+
+            getcontext().prec = 5  # Establecer la precisión a 5 decimales
+
             ecuacion = "Y = "
             for i, coef in enumerate(coeficientes):
-                ecuacion += f"({coef:.4f})*x{i+1} + "
+                ecuacion += f"({Decimal(str(coef)):.5g})*x{i+1} + "
             ecuacion = ecuacion[:-2]  # Eliminar el último "+"
-            ecuacion += f" + ({intercepto:.4f})"
+
+            intercepto_decimal = Decimal(str(intercepto))  # Convertir a Decimal
+            ecuacion += f" + ({intercepto_decimal:.5g})"
+
+            # Mostrar detalles del modelo cargado
+            
+            print(f"El modelo {filename} tiene de error1: {error1}, intercepto: {intercepto}, y coeficientes: {coeficientes}")
 
             # Crear una etiqueta para mostrar la ecuación en la ventana principal
             ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
@@ -133,7 +143,7 @@ def cargarModelo():
             ecuacion_text.pack()
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
-       
+
 def cerrar_programa():
     sys.exit()
  
