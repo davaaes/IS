@@ -13,7 +13,7 @@ global estados_checkbuttons, opcion_seleccionada
 
 
 def mostrar_modelo():
-    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe
+    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef
     n=1
     limpiar_interfaz(2)
     lista_vo=[opcion_seleccionada.get()]
@@ -32,7 +32,7 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
-    fig,error,formula= regresion(lista_vo, list_vi, dataframe)
+    fig,error,formula,interc,coef= regresion(lista_vo, list_vi, dataframe)
     mostrar_formula(error,formula,n)
     plot_grafico(fig)
 
