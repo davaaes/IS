@@ -47,7 +47,7 @@ def mostrar_formula(error,formula,n):
     formula_error.pack()
 
 def plot_grafico(fig):
-    fig.set_size_inches(6, 3)
+    fig.set_size_inches(3, 2)
     # Crea el lienzo de Tkinter para la figura de Matplotlib
     canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
     canvas.draw()
