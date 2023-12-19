@@ -9,11 +9,11 @@ import joblib
 from decimal import Decimal, getcontext
 
 
-global estados_checkbuttons, opcion_seleccionada 
+global estados_checkbuttons, opcion_seleccionada, list_vi
 
 
 def mostrar_modelo():
-    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef
+    global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef,list_vi
     n=1
     limpiar_interfaz(2)
     lista_vo=[opcion_seleccionada.get()]
@@ -33,6 +33,7 @@ def mostrar_modelo():
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
     fig,error,formula,interc,coef= regresion(lista_vo, list_vi, dataframe)
+    predicciones(list_vi)
     mostrar_formula(error,formula,n)
     plot_grafico(fig)
 
@@ -100,7 +101,7 @@ def guardar_modelo():
   
 
 def cargarModelo():
-    global opcion_seleccionada, estados_checkbuttons, dataframe, columnas
+    global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
     # Seleccionar un archivo de modelo previamente guardado
     filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
     if filename is not None:
@@ -226,6 +227,7 @@ def crear_checkbuttons():
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
     
+    
 def limpiar_interfaz(n):
     if n==1:
         for widget in frame_tabla.winfo_children():
@@ -236,13 +238,43 @@ def limpiar_interfaz(n):
             widget.destroy()
         for widget in frame_but.winfo_children():
             widget.destroy()
+        for widget in frame_predicciones.winfo_children():
+            widget.destroy() 
     elif n==2:
         for widget in frame_grafica.winfo_children():
             widget.destroy()
+        for widget in frame_predicciones.winfo_children():
+            widget.destroy() 
 # Crear ventana y otros elementos
+def on_horizontal_scroll(*args):
+    my_canvas.xview(*args)
+def predicciones(list_vi):
+    global my_canvas
+
+
+    
+    my_scrollbar=ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
+    my_scrollbar.pack(side='top',fill='x')
+    my_canvas= tk.Canvas(frame_predicciones,xscrollcommand=my_scrollbar.set)
+    my_canvas.pack(side='bottom',fill="both", expand=True)
+    second_frame= tk.Frame(my_canvas)
+    j=0
+    for i in list_vi:
+        
+        nombre=tk.Label(second_frame,text=str(i))
+        nombre.grid(column=j,row=0,padx=4)
+        j+=1
+        entrada_texto=tk.Entry(second_frame,state='normal')
+        entrada_texto.grid(column=j,row=0,padx=4)
+        j+=1
+    my_canvas.create_window((0,0), window=second_frame, anchor='nw')
+    second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+def cerrar_ventana():
+    ventana.destroy()
+    sys.exit()
 
 ventana = tk.Tk()
-
+ventana.protocol("WM_DELETE_WINDOW", cerrar_ventana)
 ancho_pantalla = ventana.winfo_screenwidth()
 alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
@@ -267,7 +299,9 @@ boton_cargar = tk.Button(ventana, text="Cargar modelo",command=cargarModelo)
 boton_cargar.place(x=1200,y=2)
 # Crear un Frame para la grafica
 frame_grafica = tk.Frame(ventana,width=400, height=200)
-frame_grafica.pack(pady=5, padx=10)
+frame_grafica.pack()
+frame_predicciones=tk.Frame(ventana,padx=5,pady=5)
+frame_predicciones.pack(fill="both", expand=True)
 
 ventana.mainloop()
 
