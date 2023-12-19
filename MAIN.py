@@ -98,8 +98,6 @@ def guardar_modelo():
     except Exception as e:
         tk.messagebox.showerror("Error", f"Error al guardar el modelo: {e}")
 
-  
-
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
 
@@ -215,8 +213,7 @@ def crear_checkbuttons():
     boton_cargar.grid(row=2,column=5,pady=3)
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
-    
-    
+     
 def limpiar_interfaz(n):
     if n==1:
         for widget in frame_tabla.winfo_children():
@@ -237,9 +234,6 @@ def limpiar_interfaz(n):
 # Crear ventana y otros elementos
 def on_horizontal_scroll(*args):
     my_canvas.xview(*args)
-
-
-
 def predicciones(list_vi):
     global my_canvas
 
@@ -261,9 +255,6 @@ def predicciones(list_vi):
         j+=1
     my_canvas.create_window((0,0), window=second_frame, anchor='nw')
     second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
-    
-
-
 def cerrar_ventana():
     ventana.destroy()
     sys.exit()
@@ -274,8 +265,12 @@ ancho_pantalla = ventana.winfo_screenwidth()
 alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
 
-entrada_texto = tk.Entry(ventana, state='disabled', width=40)
-entrada_texto.pack(pady=5)
+# Contenedor para la fila 0 (entrada de texto y botones)
+frame_top = tk.Frame(ventana)
+frame_top.pack(side="top", fill="x")
+
+entrada_texto = tk.Entry(frame_top, state='disabled', width=80)
+entrada_texto.grid(row=0,column=0,pady=3,padx=10)
 
 # Crear un Frame para la tabla
 frame_tabla = tk.Frame(ventana)
@@ -288,10 +283,12 @@ frame_but = tk.Frame(ventana)
 frame_but.pack(pady=5, padx=3)
 
 # Botón para cargar un archivo
-boton_elegir = tk.Button(ventana, text="Elegir archivo", command=cargar_archivo)
-boton_elegir.place(x=1000,y=2)
-boton_cargar = tk.Button(ventana, text="Cargar modelo",command=cargarModelo)
-boton_cargar.place(x=1200,y=2)
+boton_elegir = tk.Button(frame_top, text="Elegir archivo", command=cargar_archivo)
+boton_elegir.grid(row=0, column=1, pady=3, padx=(10, 5), sticky='n', ipadx=10)
+
+boton_cargar = tk.Button(frame_top, text="Cargar modelo", command=cargarModelo)
+boton_cargar.grid(row=0, column=2, pady=3, padx=(5, 10), sticky='n', ipadx=10)
+
 # Crear un Frame para la grafica
 frame_grafica = tk.Frame(ventana,width=400, height=200)
 frame_grafica.pack()
