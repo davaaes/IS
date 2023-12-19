@@ -17,8 +17,8 @@ class Modelo:
             self.modelo = None
 
         def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            fig,error,formula,interc,coef = regresion(columna_indep, columnas_dep, df)
-            self.modelo = (error,interc,coef)
+            fig,error,formula,interc,coef,columna_dep = regresion(columna_indep, columnas_dep, df)
+            self.modelo = (fig,error,formula,interc,coef,columna_dep)
             return self.modelo
         def predecir(self, X):
             if self.modelo is not None:
@@ -91,7 +91,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend,interc,coef
+            return fig,error,leyend,interc,coef,columnas_dep
 
     elif len(columnas_dep) == 2:
         fig = Figure(figsize=(4, 3), dpi=100)
@@ -113,7 +113,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend,interc,coef
+            return fig,error,leyend,interc,coef,columnas_dep
     elif len(columnas_dep) > 2:
         
         fig, axs = plt.subplots(len(columnas_dep), 1, figsize=(10, 15))
@@ -151,7 +151,4 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         
         if name is not None:
             fig.savefig(name)
-        else:
-            interc=0
-            coef=0
-            return fig,error,formul,interc,coef
+        return fig,error,formul,interc,coef,columnas_dep

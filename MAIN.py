@@ -32,7 +32,7 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
-    fig,error,formula,interc,coef= regresion(lista_vo, list_vi, dataframe)
+    fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
     predicciones(list_vi)
     mostrar_formula(error,formula,n)
     plot_grafico(fig)
@@ -102,9 +102,12 @@ def guardar_modelo():
 
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
+
     # Seleccionar un archivo de modelo previamente guardado
+    
     filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
     if filename is not None:
+        limpiar_interfaz(1)
         # Crear una instancia de la clase Modelo
         modelo = Modelo()
         
@@ -112,36 +115,22 @@ def cargarModelo():
         modelo_interno = modelo.cargar_modelo(filename)
         
         
+        
         if modelo_interno is not None:
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            error1, intercepto, coeficientes = modelo_interno
+            fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
               # Assuming the intercept is stored in the array
             coeficientes = coeficientes.flatten().tolist()
+            predicciones(columna_indep)
+            mostrar_formula(error,formula,1)
 
             # Ahora tendrás tus coeficientes como una lista con comas
-              
-            
-
-            getcontext().prec = 5  # Establecer la precisión a 5 decimales
-
-            ecuacion = "Y = "
-            for i, coef in enumerate(coeficientes):
-                ecuacion += f"({Decimal(str(coef)):.5g})*x{i+1} + "
-            ecuacion = ecuacion[:-2]  # Eliminar el último "+"
-
-            intercepto_decimal = Decimal(str(intercepto))  # Convertir a Decimal
-            ecuacion += f" + ({intercepto_decimal:.5g})"
-
             # Mostrar detalles del modelo cargado
             
-            print(f"El modelo {filename} tiene de error1: {error1}, intercepto: {intercepto}, y coeficientes: {coeficientes}")
+            print(f"El modelo {filename} tiene de error1: {error}, intercepto: {intercepto}, y coeficientes: {coeficientes}")  
+            
 
-            # Crear una etiqueta para mostrar la ecuación en la ventana principal
-            ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
-            ecuacion_label.pack()
-            ecuacion_text = tk.Text(ventana, height=1, width=60)
-            ecuacion_text.insert(tk.END, str(ecuacion))
-            ecuacion_text.pack()
+            
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
 
@@ -248,6 +237,9 @@ def limpiar_interfaz(n):
 # Crear ventana y otros elementos
 def on_horizontal_scroll(*args):
     my_canvas.xview(*args)
+
+
+
 def predicciones(list_vi):
     global my_canvas
 
@@ -269,6 +261,9 @@ def predicciones(list_vi):
         j+=1
     my_canvas.create_window((0,0), window=second_frame, anchor='nw')
     second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+    
+
+
 def cerrar_ventana():
     ventana.destroy()
     sys.exit()
