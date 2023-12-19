@@ -12,6 +12,7 @@ from decimal import Decimal, getcontext
 global estados_checkbuttons, opcion_seleccionada, list_vi
 
 
+
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef,list_vi
     n=1
@@ -32,6 +33,7 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
+    
     fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
     predicciones(list_vi)
     mostrar_formula(error,formula,n)
@@ -131,6 +133,12 @@ def cargarModelo():
             
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
+        
+       
+
+
+   
+
 
 def cerrar_programa():
     sys.exit()
@@ -232,29 +240,63 @@ def limpiar_interfaz(n):
         for widget in frame_predicciones.winfo_children():
             widget.destroy() 
 # Crear ventana y otros elementos
+contenido_cajas = []
+
 def on_horizontal_scroll(*args):
     my_canvas.xview(*args)
-def predicciones(list_vi):
-    global my_canvas
 
+
+
+def obtener_contenido_cajas():
+    """
+    Función para obtener el contenido actual de las cajas de entrada.
+    """
+    global contenido_cajas
+
+    contenido_actual = [entrada.get() for entrada in contenido_cajas]
+    return contenido_actual
+    
 
     
-    my_scrollbar=ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
-    my_scrollbar.pack(side='top',fill='x')
-    my_canvas= tk.Canvas(frame_predicciones,xscrollcommand=my_scrollbar.set)
-    my_canvas.pack(side='bottom',fill="both", expand=True)
-    second_frame= tk.Frame(my_canvas)
-    j=0
+    
+
+def obtener_y_mostrar_contenido():
+    """
+    Función para obtener y mostrar el contenido actual de las cajas de entrada.
+    """
+    contenido_actual = obtener_contenido_cajas()
+    print("Contenido actual de las cajas:", contenido_actual)
+
+def predicciones(list_vi):
+    global my_canvas, contenido_cajas
+    
+    my_scrollbar = ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
+    my_scrollbar.pack(side='top', fill='x')
+    my_canvas = tk.Canvas(frame_predicciones, xscrollcommand=my_scrollbar.set)
+    my_canvas.pack(side='bottom', fill="both", expand=True)
+    second_frame = tk.Frame(my_canvas)
+    j = 0
+    
     for i in list_vi:
-        
-        nombre=tk.Label(second_frame,text=str(i))
-        nombre.grid(column=j,row=0,padx=4)
-        j+=1
-        entrada_texto=tk.Entry(second_frame,state='normal')
-        entrada_texto.grid(column=j,row=0,padx=4)
-        j+=1
-    my_canvas.create_window((0,0), window=second_frame, anchor='nw')
+        nombre = tk.Label(second_frame, text=str(i))
+        nombre.grid(column=j, row=0, padx=4)
+        j += 1
+        entrada_texto = tk.Entry(second_frame, state='normal')
+        entrada_texto.grid(column=j, row=0, padx=4)
+        j += 1
+        # Agregar la caja de entrada a la lista
+        contenido_cajas.append(entrada_texto)
+    
+    my_canvas.create_window((0, 0), window=second_frame, anchor='nw')
     second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+    ultima_caja_coords = contenido_cajas[-1].winfo_geometry().split('+')
+    x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
+    
+    # Botón para obtener y mostrar el contenido actual
+    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=obtener_y_mostrar_contenido)
+    boton_obtener_contenido.place(x=x_pos_ultima_caja + 10, y=ultima_caja_coords[2])
+
 def cerrar_ventana():
     ventana.destroy()
     sys.exit()

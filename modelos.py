@@ -116,7 +116,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             return fig,error,leyend,interc,coef,columnas_dep
     elif len(columnas_dep) > 2:
         
-        fig, axs = plt.subplots(len(columnas_dep), 1, figsize=(10, 15))
+        fig, axs = plt.subplots(1,len(columnas_dep) )
         
         formul = "Y = " 
         for i in range(len(coef[0])):
@@ -146,7 +146,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             axs[i].set_title(title,fontsize = 6)
             l[i] = 0
             
-
+        plt.tight_layout()
         plt.subplots_adjust(hspace = 0.5)
         
         if name is not None:
