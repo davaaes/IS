@@ -80,7 +80,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
     print("-" * 36)
 
     if len(columnas_dep) == 1:
-        fig = Figure(figsize=(5, 4), dpi=100)
+        fig = Figure(figsize=(3, 2), dpi=100)
         ax = fig.add_subplot(111)
         ax.scatter(X1, Y1, label='Datos', s=10)
         ax.plot(X1, y_pred, color='red', label='Línea de regresión')
@@ -98,7 +98,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             return reg,fig,error,leyend,interc,coef,columnas_dep
 
     elif len(columnas_dep) == 2:
-        fig = Figure(figsize=(4, 3), dpi=100)
+        fig = Figure(figsize=(3, 2), dpi=100)
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(dep_v[0], dep_v[1], Y1, c='r', marker='o')
         ax.set_xlabel((str(columnas_dep[0])).upper())
@@ -121,7 +121,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             return reg,fig,error,leyend,interc,coef,columnas_dep
     elif len(columnas_dep) > 2:
         
-        fig, axs = plt.subplots(1,len(columnas_dep) )
+        fig, axs = plt.subplots(1,len(columnas_dep),figsize=(3* len(columnas_dep), 2))
         
         formul = "Y = " 
         for i in range(len(coef[0])):

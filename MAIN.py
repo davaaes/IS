@@ -53,11 +53,24 @@ def mostrar_formula(error, formula, n):
     etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
-    fig.set_size_inches(3, 2)
-    # Crea el lienzo de Tkinter para la figura de Matplotlib
+    # Configurar el lienzo para la figura de Matplotlib
     canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
-    canvas.draw()
-    canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
+    canvas_widget = canvas.get_tk_widget()
+    canvas_widget.pack(side=tk.TOP)
+
+    # Configurar la barra de desplazamiento horizontal
+    scrollbar_horizontal = ttk.Scrollbar(frame_grafica, orient=tk.HORIZONTAL, command=canvas_widget.xview)
+    scrollbar_horizontal.pack(side=tk.TOP, fill=tk.X)
+
+    # Configurar el lienzo para que la barra de desplazamiento horizontal afecte a la vista
+    canvas_widget.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=(0, 0, 8000, 300))  # Ajusta el valor 800 según sea necesario
+
+    # Función para actualizar la vista del lienzo cuando se desplaza horizontalmente
+    def on_canvas_scroll_x(*args):
+        canvas_widget.xview(*args)
+
+    scrollbar_horizontal.config(command=on_canvas_scroll_x)
+    
 
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
@@ -136,12 +149,6 @@ def cargarModelo():
             
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
-        
-       
-
-
-   
-
 
 def cerrar_programa():
     sys.exit()
@@ -248,8 +255,6 @@ contenido_cajas = []
 def on_horizontal_scroll(*args):
     my_canvas.xview(*args)
 
-
-
 def obtener_contenido_cajas():
     """
     Función para obtener el contenido actual de las cajas de entrada.
@@ -258,10 +263,6 @@ def obtener_contenido_cajas():
 
     contenido_actual = [entrada.get() for entrada in contenido_cajas]
     return contenido_actual
-    
-
-    
-    
 
 def obtener_y_mostrar_contenido(reg_model):
     """
@@ -290,8 +291,6 @@ def mostrar_prediccion(reg_model):
     print("La prediccion es:", prediccion)
     tk.messagebox.showinfo("Éxito", f"La prediccion es: {prediccion}")
     
-
-
 def predicciones(list_vi, reg_model):
     global my_canvas, contenido_cajas, etiqueta_prediccion
     
@@ -320,14 +319,9 @@ def predicciones(list_vi, reg_model):
     
     # Botón para obtener y mostrar el contenido actual
     boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=lambda: mostrar_prediccion(reg_model))
-    boton_obtener_contenido.place(x=x_pos_ultima_caja + 1000, y=int(ultima_caja_coords[2]) + 40)
+    boton_obtener_contenido.place(x=x_pos_ultima_caja + 20, y=int(ultima_caja_coords[2]) + 60)
 
     # Etiqueta para mostrar la predicción
-    
-
-
-
-
 
 def cerrar_ventana():
     ventana.destroy()
@@ -364,8 +358,10 @@ boton_cargar = tk.Button(frame_top, text="Cargar modelo", command=cargarModelo)
 boton_cargar.grid(row=0, column=2, pady=3, padx=(5, 10), sticky='n', ipadx=10)
 
 # Crear un Frame para la grafica
-frame_grafica = tk.Frame(ventana,width=400, height=200)
-frame_grafica.pack()
+frame_grafica = tk.Frame(ventana,width=400, height=300)
+frame_grafica.pack(padx=50)
+
+#Crear Frame para predicciones
 frame_predicciones=tk.Frame(ventana,padx=5,pady=5)
 frame_predicciones.pack(fill="both", expand=True)
 
