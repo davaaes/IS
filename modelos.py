@@ -5,6 +5,7 @@ import seaborn as sb
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from matplotlib.figure import Figure
+from matplotlib.figure import Figure
 from sklearn.metrics import mean_squared_error
 from mpl_toolkits.mplot3d import Axes3D 
 from lector import *
@@ -17,8 +18,8 @@ class Modelo:
             self.modelo = None
 
         def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            fig,error,formula,interc,coef = regresion(columna_indep, columnas_dep, df)
-            self.modelo = (error,interc,coef)
+            reg,fig,error,formula,interc,coef,columna_dep = regresion(columna_indep, columnas_dep, df)
+            self.modelo = (reg,fig,error,formula,interc,coef,columna_dep)
             return self.modelo
         def predecir(self, X):
             if self.modelo is not None:
@@ -88,10 +89,13 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
         ax.set_title('Regresión Lineal Simple')
 
+       
+
+
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend,interc,coef
+            return reg,fig,error,leyend,interc,coef,columnas_dep
 
     elif len(columnas_dep) == 2:
         fig = Figure(figsize=(4, 3), dpi=100)
@@ -109,14 +113,15 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(coef[0][0]) + ")" + "*x2 +" + "(" + str(
             interc) + ")"
-
+        
+        
         if name is not None:
             fig.savefig(name)
         else:
-            return fig,error,leyend,interc,coef
+            return reg,fig,error,leyend,interc,coef,columnas_dep
     elif len(columnas_dep) > 2:
         
-        fig, axs = plt.subplots(len(columnas_dep), 1, figsize=(10, 15))
+        fig, axs = plt.subplots(1,len(columnas_dep) )
         
         formul = "Y = " 
         for i in range(len(coef[0])):
@@ -146,12 +151,11 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             axs[i].set_title(title,fontsize = 6)
             l[i] = 0
             
-
+        plt.tight_layout()
         plt.subplots_adjust(hspace = 0.5)
         
+       
+
         if name is not None:
             fig.savefig(name)
-        else:
-            interc=0
-            coef=0
-            return fig,error,formul,interc,coef
+        return reg,fig,error,formul,interc,coef,columnas_dep

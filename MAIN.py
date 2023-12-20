@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import ttk
 import sys
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import lector as l
 from modelos import *
 import joblib
@@ -10,6 +11,7 @@ from decimal import Decimal, getcontext
 
 
 global estados_checkbuttons, opcion_seleccionada, list_vi
+
 
 
 def mostrar_modelo():
@@ -32,20 +34,23 @@ def mostrar_modelo():
     if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
-    fig,error,formula,interc,coef= regresion(lista_vo, list_vi, dataframe)
-    predicciones(list_vi)
+    
+    reg,fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
+    predicciones(list_vi,reg)
     mostrar_formula(error,formula,n)
     plot_grafico(fig)
 
-def mostrar_formula(error,formula,n):
+def mostrar_formula(error, formula, n):
+    global etiqueta_formula_error
+
     contenido = f"Formula={formula}\nError={error}"
 
-    if n==1:
-        formula_error = tk.Label(frame_grafica, text=f"Formula={formula}\nError={error}")
+    if n == 1:
+        etiqueta_formula_error = tk.Label(frame_grafica, text=contenido)
     else:
-        formula_error = tk.Label(text=f"Formula={formula}\nError={error}")
+        etiqueta_formula_error.config(text=contenido)
 
-    formula_error.pack()
+    etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
     fig.set_size_inches(3, 2)
@@ -100,9 +105,12 @@ def guardar_modelo():
 
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
+
     # Seleccionar un archivo de modelo previamente guardado
+    
     filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
     if filename is not None:
+        limpiar_interfaz(1)
         # Crear una instancia de la clase Modelo
         modelo = Modelo()
         
@@ -110,38 +118,30 @@ def cargarModelo():
         modelo_interno = modelo.cargar_modelo(filename)
         
         
+        
         if modelo_interno is not None:
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            error1, intercepto, coeficientes = modelo_interno
+            reg,fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
               # Assuming the intercept is stored in the array
             coeficientes = coeficientes.flatten().tolist()
+            predicciones(columna_indep,reg)
+            mostrar_formula(error,formula,1)
 
             # Ahora tendrás tus coeficientes como una lista con comas
-              
-            
-
-            getcontext().prec = 5  # Establecer la precisión a 5 decimales
-
-            ecuacion = "Y = "
-            for i, coef in enumerate(coeficientes):
-                ecuacion += f"({Decimal(str(coef)):.5g})*x{i+1} + "
-            ecuacion = ecuacion[:-2]  # Eliminar el último "+"
-
-            intercepto_decimal = Decimal(str(intercepto))  # Convertir a Decimal
-            ecuacion += f" + ({intercepto_decimal:.5g})"
-
             # Mostrar detalles del modelo cargado
             
-            print(f"El modelo {filename} tiene de error1: {error1}, intercepto: {intercepto}, y coeficientes: {coeficientes}")
+            print(f"El modelo {filename} tiene de error1: {error}, intercepto: {intercepto}, y coeficientes: {coeficientes}")  
+            
 
-            # Crear una etiqueta para mostrar la ecuación en la ventana principal
-            ecuacion_label = tk.Label(ventana, text="Ecuación del modelo")
-            ecuacion_label.pack()
-            ecuacion_text = tk.Text(ventana, height=1, width=60)
-            ecuacion_text.insert(tk.END, str(ecuacion))
-            ecuacion_text.pack()
+            
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
+        
+       
+
+
+   
+
 
 def cerrar_programa():
     sys.exit()
@@ -243,30 +243,91 @@ def limpiar_interfaz(n):
         for widget in frame_predicciones.winfo_children():
             widget.destroy() 
 # Crear ventana y otros elementos
+contenido_cajas = []
+
 def on_horizontal_scroll(*args):
     my_canvas.xview(*args)
 
-def predicciones(list_vi):
-    global my_canvas
 
+
+def obtener_contenido_cajas():
+    """
+    Función para obtener el contenido actual de las cajas de entrada.
+    """
+    global contenido_cajas
+
+    contenido_actual = [entrada.get() for entrada in contenido_cajas]
+    return contenido_actual
+    
 
     
-    my_scrollbar=ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
-    my_scrollbar.pack(side='top',fill='x')
-    my_canvas= tk.Canvas(frame_predicciones,xscrollcommand=my_scrollbar.set)
-    my_canvas.pack(side='bottom',fill="both", expand=True)
-    second_frame= tk.Frame(my_canvas)
-    j=0
+    
+
+def obtener_y_mostrar_contenido(reg_model):
+    """
+    Función para obtener y mostrar el contenido actual de las cajas de entrada.
+    """
+    contenido_actual = obtener_contenido_cajas()
+    print("Contenido actual de las cajas:", contenido_actual)
+
+    # Convertir los valores a un array NumPy
+    valores_x = np.array(contenido_actual, dtype=float)
+
+    # Reshape para que sea 2D si es necesario
+    if len(valores_x.shape) == 1:
+        valores_x = valores_x.reshape(1, -1)
+
+    # Realizar la predicción
+    prediccion = reg_model.predict(valores_x)
+
+    return prediccion
+
+def mostrar_prediccion(reg_model):
+    # Obtener la predicción
+    prediccion = obtener_y_mostrar_contenido(reg_model)
+
+    # Mostrar la predicción en tu interfaz gráfica (ajusta esto según tu interfaz)
+    print("La prediccion es:", prediccion)
+    tk.messagebox.showinfo("Éxito", f"La prediccion es: {prediccion}")
+    
+
+
+def predicciones(list_vi, reg_model):
+    global my_canvas, contenido_cajas, etiqueta_prediccion
+    
+    my_scrollbar = ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
+    my_scrollbar.pack(side='top', fill='x')
+    my_canvas = tk.Canvas(frame_predicciones, xscrollcommand=my_scrollbar.set)
+    my_canvas.pack(side='bottom', fill="both", expand=True)
+    second_frame = tk.Frame(my_canvas)
+    j = 0
+    
     for i in list_vi:
-        
-        nombre=tk.Label(second_frame,text=str(i))
-        nombre.grid(column=j,row=0,padx=4)
-        j+=1
-        entrada_texto=tk.Entry(second_frame,state='normal')
-        entrada_texto.grid(column=j,row=0,padx=4)
-        j+=1
-    my_canvas.create_window((0,0), window=second_frame, anchor='nw')
+        nombre = tk.Label(second_frame, text=str(i))
+        nombre.grid(column=j, row=0, padx=4)
+        j += 1
+        entrada_texto = tk.Entry(second_frame, state='normal')
+        entrada_texto.grid(column=j, row=0, padx=4)
+        j += 1
+        # Agregar la caja de entrada a la lista
+        contenido_cajas.append(entrada_texto)
+    
+    my_canvas.create_window((0, 0), window=second_frame, anchor='nw')
     second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+    ultima_caja_coords = contenido_cajas[-1].winfo_geometry().split('+')
+    x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
+    
+    # Botón para obtener y mostrar el contenido actual
+    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=lambda: mostrar_prediccion(reg_model))
+    boton_obtener_contenido.place(x=x_pos_ultima_caja + 1000, y=int(ultima_caja_coords[2]) + 40)
+
+    # Etiqueta para mostrar la predicción
+    
+
+
+
+
 
 def cerrar_ventana():
     ventana.destroy()
