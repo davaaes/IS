@@ -34,20 +34,22 @@ def mostrar_modelo():
         tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
         return
     
-    fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
-    predicciones(list_vi)
+    reg,fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
+    predicciones(list_vi,reg)
     mostrar_formula(error,formula,n)
     plot_grafico(fig)
 
-def mostrar_formula(error,formula,n):
+def mostrar_formula(error, formula, n):
+    global etiqueta_formula_error
+
     contenido = f"Formula={formula}\nError={error}"
 
-    if n==1:
-        formula_error = tk.Label(frame_grafica, text=f"Formula={formula}\nError={error}")
+    if n == 1:
+        etiqueta_formula_error = tk.Label(frame_grafica, text=contenido)
     else:
-        formula_error = tk.Label(text=f"Formula={formula}\nError={error}")
+        etiqueta_formula_error.config(text=contenido)
 
-    formula_error.pack()
+    etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
     fig.set_size_inches(3, 2)
@@ -118,10 +120,10 @@ def cargarModelo():
         
         if modelo_interno is not None:
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
+            reg,fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
               # Assuming the intercept is stored in the array
             coeficientes = coeficientes.flatten().tolist()
-            predicciones(columna_indep)
+            predicciones(columna_indep,reg)
             mostrar_formula(error,formula,1)
 
             # Ahora tendrás tus coeficientes como una lista con comas
@@ -260,15 +262,37 @@ def obtener_contenido_cajas():
     
     
 
-def obtener_y_mostrar_contenido():
+def obtener_y_mostrar_contenido(reg_model):
     """
     Función para obtener y mostrar el contenido actual de las cajas de entrada.
     """
     contenido_actual = obtener_contenido_cajas()
     print("Contenido actual de las cajas:", contenido_actual)
 
-def predicciones(list_vi):
-    global my_canvas, contenido_cajas
+    # Convertir los valores a un array NumPy
+    valores_x = np.array(contenido_actual, dtype=float)
+
+    # Reshape para que sea 2D si es necesario
+    if len(valores_x.shape) == 1:
+        valores_x = valores_x.reshape(1, -1)
+
+    # Realizar la predicción
+    prediccion = reg_model.predict(valores_x)
+
+    return prediccion
+
+def mostrar_prediccion(reg_model):
+    # Obtener la predicción
+    prediccion = obtener_y_mostrar_contenido(reg_model)
+
+    # Mostrar la predicción en tu interfaz gráfica (ajusta esto según tu interfaz)
+    print("La prediccion es:", prediccion)
+    tk.messagebox.showinfo("Éxito", f"La prediccion es: {prediccion}")
+    
+
+
+def predicciones(list_vi, reg_model):
+    global my_canvas, contenido_cajas, etiqueta_prediccion
     
     my_scrollbar = ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
     my_scrollbar.pack(side='top', fill='x')
@@ -294,8 +318,15 @@ def predicciones(list_vi):
     x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
     
     # Botón para obtener y mostrar el contenido actual
-    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=obtener_y_mostrar_contenido)
-    boton_obtener_contenido.place(x=x_pos_ultima_caja + 10, y=ultima_caja_coords[2])
+    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=lambda: mostrar_prediccion(reg_model))
+    boton_obtener_contenido.place(x=x_pos_ultima_caja + 1000, y=int(ultima_caja_coords[2]) + 40)
+
+    # Etiqueta para mostrar la predicción
+    
+
+
+
+
 
 def cerrar_ventana():
     ventana.destroy()
