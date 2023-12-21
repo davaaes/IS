@@ -56,21 +56,20 @@ def plot_grafico(fig):
     # Configurar el lienzo para la figura de Matplotlib
     canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.pack(side=tk.TOP)
+    canvas_widget.pack()
 
     # Configurar la barra de desplazamiento horizontal
     scrollbar_horizontal = ttk.Scrollbar(frame_grafica, orient=tk.HORIZONTAL, command=canvas_widget.xview)
     scrollbar_horizontal.pack(side=tk.TOP, fill=tk.X)
 
     # Configurar el lienzo para que la barra de desplazamiento horizontal afecte a la vista
-    canvas_widget.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=(0, 0, 8000, 300))  # Ajusta el valor 800 según sea necesario
+    canvas_widget.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=canvas_widget.bbox("all"))
 
     # Función para actualizar la vista del lienzo cuando se desplaza horizontalmente
     def on_canvas_scroll_x(*args):
         canvas_widget.xview(*args)
 
-    scrollbar_horizontal.config(command=on_canvas_scroll_x)
-    
+    scrollbar_horizontal.config(command=on_canvas_scroll_x) 
 
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
@@ -173,7 +172,11 @@ def cargar_archivo():
             # Configurar encabezados
             for column in dataframe.columns:
                 treeview.heading(column, text=column)
-            
+            # Configurar el tamaño de los espacios entre elementos
+            treeview.column("#0", minwidth=0, width=40, stretch=tk.NO)  # Espacio entre el ícono y el texto
+
+            for column in dataframe.columns:
+                treeview.column(column, minwidth=0, width=100, stretch=tk.NO)  # Espacio entre las columnas
             # Insertar datos
             for i, row in dataframe.iterrows():
                 treeview.insert("", i, values=tuple(row))

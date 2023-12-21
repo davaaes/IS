@@ -1,27 +1,6 @@
 import pandas as pd
 import sqlite3
 
-def obtener_nombres_tablas(ruta):
-    try:
-        # Crear una conexión a la base de datos SQLite
-        conn = sqlite3.connect(ruta)
-
-        # Consulta para obtener los nombres de las tablas
-        query = "SELECT name FROM sqlite_master WHERE type='table';"
-        resultado = conn.execute(query)
-
-        # Obtener nombres de las tablas
-        nombres_tablas = [row[0] for row in resultado.fetchall()]
-
-        # Cerrar la conexión
-        conn.close()
-
-        return nombres_tablas
-
-    except Exception as e:
-        print(f"Error al obtener nombres de tablas: {str(e)}")
-        return None
-
 def leer_archivo(ruta):
     if ruta.endswith('.csv'):
         df = pd.read_csv(ruta)
@@ -57,3 +36,12 @@ def leer_archivo(ruta):
         df = None
 
     return df
+
+def obtener_nombres_tablas(ruta):
+    try:
+        with sqlite3.connect(ruta) as conn:
+            query = "SELECT name FROM sqlite_master WHERE type='table';"
+            resultado = conn.execute(query)
+            return [row[0] for row in resultado.fetchall()]
+    except Exception as e:
+        raise RuntimeError(f"Error al obtener nombres de tablas: {str(e)}")
