@@ -123,7 +123,6 @@ def cargarModelo():
     
     filename = filedialog.askopenfilename(title="Seleccionar modelo", filetypes=[("Joblib files", "*.joblib"), ("All files", "*.*")])
     if filename is not None:
-        limpiar_interfaz(1)
         # Crear una instancia de la clase Modelo
         modelo = Modelo()
         
@@ -131,8 +130,8 @@ def cargarModelo():
         modelo_interno = modelo.cargar_modelo(filename)
         
         
-        
         if modelo_interno is not None:
+            limpiar_interfaz(1)
             # Obtener los coeficientes y el término independiente desde el modelo interno
             reg,fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
               # Assuming the intercept is stored in the array

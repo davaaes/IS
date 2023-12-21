@@ -1,8 +1,9 @@
 import unittest
 import pandas as pd
 from lector import leer_archivo
+from modelos import *
 
-class TestLeerArchivo(unittest.TestCase):
+class TestArchivo(unittest.TestCase):
     def test_leer_archivo_con_archivo_csv(self):
         ruta = 'housingcsv.csv'
         df = leer_archivo(ruta)
