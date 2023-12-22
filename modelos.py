@@ -91,7 +91,6 @@ def regresion(columna_indep, columnas_dep, df, name=None):
 
        
 
-
         if name is not None:
             fig.savefig(name)
         else:

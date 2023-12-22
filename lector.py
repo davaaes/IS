@@ -3,8 +3,10 @@ import sqlite3
 
 def leer_archivo(ruta):
     if ruta.endswith('.csv'):
+        # Si la ruta termina con '.csv', lee el archivo CSV utilizando pandas
         df = pd.read_csv(ruta)
     elif ruta.endswith('.xlsx'):
+        # Si la ruta termina con '.xlsx', lee el archivo Excel utilizando pandas
         df = pd.read_excel(ruta)
     elif ruta.endswith('.db'):
         try:

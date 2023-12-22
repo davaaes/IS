@@ -53,23 +53,38 @@ def mostrar_formula(error, formula, n):
     etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
-    # Configurar el lienzo para la figura de Matplotlib
-    canvas = FigureCanvasTkAgg(fig, master=frame_grafica)
-    canvas_widget = canvas.get_tk_widget()
-    canvas_widget.pack()
+    # Crear un lienzo en el frame_grafica
+    
+    canvas = tk.Canvas(frame_grafica,bg=fondo,highlightthickness=0)
+    canvas.pack(expand=True, fill='both')
+
+    # Crear un frame en el lienzo
+    frame_canvas = tk.Frame(canvas,bg=fondo)
+    canvas.create_window((0, 0), window=frame_canvas, anchor=tk.NW)
 
     # Configurar la barra de desplazamiento horizontal
-    scrollbar_horizontal = ttk.Scrollbar(frame_grafica, orient=tk.HORIZONTAL, command=canvas_widget.xview)
-    scrollbar_horizontal.pack(side=tk.TOP, fill=tk.X)
+    scrollbar_horizontal = ttk.Scrollbar(frame_canvas, orient=tk.HORIZONTAL, command=canvas.xview)
+    scrollbar_horizontal.pack(side=tk.BOTTOM, fill=tk.X)
 
     # Configurar el lienzo para que la barra de desplazamiento horizontal afecte a la vista
-    canvas_widget.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=canvas_widget.bbox("all"))
+    canvas.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=canvas.bbox("all"))
 
     # Función para actualizar la vista del lienzo cuando se desplaza horizontalmente
     def on_canvas_scroll_x(*args):
-        canvas_widget.xview(*args)
+        canvas.xview(*args)
 
-    scrollbar_horizontal.config(command=on_canvas_scroll_x) 
+    scrollbar_horizontal.config(command=on_canvas_scroll_x)
+
+    # Configurar el lienzo para la figura de Matplotlib
+    canvas_fig = FigureCanvasTkAgg(fig, master=frame_canvas)
+    canvas_widget = canvas_fig.get_tk_widget()
+    canvas_widget.pack(expand=tk.YES, fill=tk.BOTH)
+
+    def on_canvas_configure(event):
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+    canvas.bind('<Configure>', on_canvas_configure)
+    canvas_fig.draw_idle()
 
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
@@ -198,6 +213,13 @@ def crear_checkbuttons():
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
     global estados_checkbuttons, opcion_seleccionada,columnas 
+    canvas = tk.Canvas(frame_grafica,bg=fondo,highlightthickness=0)
+    canvas.pack(expand=True, fill='both')
+
+    # Crear un frame en el lienzo
+    frame_canvas = tk.Frame(canvas,bg=fondo)
+    canvas.create_window((0, 0), window=frame_canvas, anchor=tk.NW)
+    
     datos=l.leer_archivo(archivo)
     columnas = list(datos.columns)
 
@@ -218,7 +240,6 @@ def crear_checkbuttons():
     columnos = list(datos.columns)
 
     # Crear una nueva ventana para los Radiobuttons
-
 
     # Variable para almacenar la opción seleccionada
     opcion_seleccionada = tk.StringVar()
@@ -360,7 +381,8 @@ boton_cargar = tk.Button(frame_top, text="Cargar modelo", command=cargarModelo)
 boton_cargar.grid(row=0, column=2, pady=3, padx=(5, 10), sticky='n', ipadx=10)
 
 # Crear un Frame para la grafica
-frame_grafica = tk.Frame(ventana,width=400, height=300)
+fondo=ventana.cget('bg')
+frame_grafica = tk.Frame(ventana,width=600, height=300,bg=fondo)
 frame_grafica.pack(padx=50)
 
 #Crear Frame para predicciones
