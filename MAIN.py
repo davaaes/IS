@@ -310,16 +310,15 @@ def mostrar_prediccion(reg_model):
     # Obtener la predicción
     prediccion = obtener_y_mostrar_contenido(reg_model)
 
-    # Mostrar la predicción en tu interfaz gráfica (ajusta esto según tu interfaz)
-    print("La prediccion es:", prediccion)
-    tk.messagebox.showinfo("Éxito", f"La prediccion es: {prediccion}")
+    # Mostrar la predicción en tu interfaz gráfica
+    etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
     
 def predicciones(list_vi, reg_model):
     global my_canvas, contenido_cajas, etiqueta_prediccion
     
     my_scrollbar = ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
     my_scrollbar.pack(side='top', fill='x')
-    my_canvas = tk.Canvas(frame_predicciones, xscrollcommand=my_scrollbar.set)
+    my_canvas = tk.Canvas(frame_predicciones, xscrollcommand=my_scrollbar.set,highlightthickness=0)
     my_canvas.pack(side='bottom', fill="both", expand=True)
     second_frame = tk.Frame(my_canvas)
     j = 0
@@ -345,6 +344,8 @@ def predicciones(list_vi, reg_model):
     boton_obtener_contenido.place(x=x_pos_ultima_caja + 20, y=int(ultima_caja_coords[2]) + 60)
 
     # Etiqueta para mostrar la predicción
+    etiqueta_prediccion = tk.Label(frame_predicciones, text="")
+    etiqueta_prediccion.place(x=x_pos_ultima_caja + 40 + boton_obtener_contenido.winfo_reqwidth(), y=int(ultima_caja_coords[2]) + 60)
 
 def cerrar_ventana():
     ventana.destroy()
