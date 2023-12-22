@@ -340,7 +340,7 @@ def predicciones(list_vi, reg_model):
     x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
     
     # Botón para obtener y mostrar el contenido actual
-    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Contenido", command=lambda: mostrar_prediccion(reg_model))
+    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Predicción", command=lambda: mostrar_prediccion(reg_model))
     boton_obtener_contenido.place(x=x_pos_ultima_caja + 20, y=int(ultima_caja_coords[2]) + 60)
 
     # Etiqueta para mostrar la predicción
