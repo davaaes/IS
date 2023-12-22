@@ -1,57 +1,62 @@
-import sklearn as sk 
-import matplotlib.pylab as plt
-import pandas as pd
-import seaborn as sb
+import tkinter as tk
+from tkinter import ttk
 import numpy as np
 from sklearn.linear_model import LinearRegression
-from matplotlib.figure import Figure
-from matplotlib.figure import Figure
 from sklearn.metrics import mean_squared_error
-from mpl_toolkits.mplot3d import Axes3D 
-from lector import *
+from matplotlib.figure import Figure
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 import joblib
-from sklearn.impute import SimpleImputer
 
 
 class Modelo:
-        def __init__(self):
-            self.modelo = None
+    def __init__(self):
+        # Inicializa el modelo como None
+        self.modelo = None
 
-        def entrenar_modelo(self, columna_indep, columnas_dep, df):
-            reg,fig,error,formula,interc,coef,columna_dep = regresion(columna_indep, columnas_dep, df)
-            self.modelo = (reg,fig,error,formula,interc,coef,columna_dep)
-            return self.modelo
-        def predecir(self, X):
-            if self.modelo is not None:
-                return self.modelo.predict(X)
-            else:
-                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+    def entrenar_modelo(self, columna_indep, columnas_dep, df):
+        # Función para entrenar un modelo de regresión lineal
+        reg, fig, error, formula, interc, coef, columna_dep = regresion(columna_indep, columnas_dep, df)
+        # Almacena el modelo y otros resultados relevantes
+        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep)
+        return self.modelo
 
-        def guardar_modelo(self, path):
-            if self.modelo is not None:
-                joblib.dump(self.modelo,path)
-            else:
-                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+    def predecir(self, X):
+        # Realiza predicciones utilizando el modelo entrenado
+        if self.modelo is not None:
+            return self.modelo[0].predict(X)
+        else:
+            raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
-        def cargar_modelo(self, path):
-            try:
+    def guardar_modelo(self, path):
+        # Guarda el modelo en un archivo utilizando joblib
+        if self.modelo is not None:
+            joblib.dump(self.modelo, path)
+        else:
+            raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+
+    def cargar_modelo(self, path):
+        try:
             # Carga el modelo desde el archivo
-                modelo_cargado = joblib.load(path)
-                self.modelo = modelo_cargado
-                print("Modelo cargado correctamente. Tipo de objeto:", type(self.modelo))
-                return self.modelo
-            except Exception as e:
-                print(f"Error al cargar el modelo: {e}")
-                return None  # Asegúrate de retornar None si hay un error
+            modelo_cargado = joblib.load(path)
+            self.modelo = modelo_cargado
+            print("Modelo cargado correctamente. Tipo de objeto:", type(self.modelo))
+            return self.modelo
+        except Exception as e:
+            print(f"Error al cargar el modelo: {e}")
+            return None  # Asegúrate de retornar None si hay un error
 
-        def obtener_coeficientes(self):
-            if self.modelo is not None:
-                error, formula = self.modelo
-                return formula.coef_, formula.intercept_
-            else:
-                raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+    def obtener_coeficientes(self):
+        # Obtiene los coeficientes de la regresión
+        if self.modelo is not None:
+            error, formula = self.modelo[2], self.modelo[3]
+            return formula.coef_, formula.intercept_
+        else:
+            raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
+
 
 def regresion(columna_indep, columnas_dep, df, name=None):
+    # Función para realizar la regresión lineal y generar gráficos
     df = df.dropna()
     indep_v = df[columna_indep].values
     x = len(columnas_dep)
@@ -63,6 +68,8 @@ def regresion(columna_indep, columnas_dep, df, name=None):
     y_pred = reg.predict(X1)
     error = np.sqrt(mean_squared_error(Y1, y_pred))
     r2 = reg.score(X1, Y1)
+    
+    # Imprimir métricas de regresión
     print("-" * 36)
     print("Error sin raíz: %.3f" % mean_squared_error(Y1, y_pred))
     print("-" * 36)
@@ -70,8 +77,10 @@ def regresion(columna_indep, columnas_dep, df, name=None):
     print("-" * 36)
     print("r2 es : ", r2)
     print("-" * 36)
+    
     coef = reg.coef_
     interc = "{:.4f}".format(reg.intercept_[0])
+    
     for i in range(len(coef[0])):
         print("Beta ", str(i + 1), " =", "{:.8f}".format(coef[0][i]))
         coef[0][i] = "{:.8f}".format(coef[0][i])
@@ -80,6 +89,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
     print("-" * 36)
 
     if len(columnas_dep) == 1:
+        # Gráfico para la regresión lineal simple
         fig = Figure(figsize=(3, 2), dpi=100)
         ax = fig.add_subplot(111)
         ax.scatter(X1, Y1, label='Datos', s=10)
@@ -89,14 +99,14 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
         ax.set_title('Regresión Lineal Simple')
 
-       
-
+        # Guardar el gráfico si se especifica un nombre
         if name is not None:
             fig.savefig(name)
         else:
-            return reg,fig,error,leyend,interc,coef,columnas_dep
+            return reg, fig, error, leyend, interc, coef, columnas_dep
 
     elif len(columnas_dep) == 2:
+        # Gráfico para la regresión lineal múltiple (2D)
         fig = Figure(figsize=(3, 2), dpi=100)
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(dep_v[0], dep_v[1], Y1, c='r', marker='o')
@@ -104,6 +114,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         ax.set_ylabel((str(columnas_dep[1])).upper())
         ax.set_zlabel((str(columna_indep[0])).upper())
 
+        # Superficie de la regresión
         x10_range = np.linspace(min(dep_v[0]), max(dep_v[0]), 10)
         x11_range = np.linspace(min(dep_v[1]), max(dep_v[1]), 10)
         x1_mesh, x2_mesh = np.meshgrid(x10_range, x11_range)
@@ -113,15 +124,16 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(coef[0][0]) + ")" + "*x2 +" + "(" + str(
             interc) + ")"
         
-        
+        # Guardar el gráfico si se especifica un nombre
         if name is not None:
             fig.savefig(name)
         else:
-            return reg,fig,error,leyend,interc,coef,columnas_dep
+            return reg, fig, error, leyend, interc, coef, columnas_dep
     elif len(columnas_dep) > 2:
+        # Gráficos para la regresión lineal múltiple (más de 2D)
+        fig, axs = plt.subplots(1, len(columnas_dep), figsize=(3 * len(columnas_dep), 2))
         
-        fig, axs = plt.subplots(1,len(columnas_dep),figsize=(3* len(columnas_dep), 2))
-        
+        # Crear la fórmula de la regresión
         formul = "Y = " 
         for i in range(len(coef[0])):
             formul += ("(" + str(coef[0][i])+")" + "*x" + str(i+1) + " + ") 
@@ -134,14 +146,11 @@ def regresion(columna_indep, columnas_dep, df, name=None):
             x += intercept
             return x
 
-        
-        l = []
-        for i in range(len(coef[0])):
-            l.append(0)
+        # Configurar datos para la visualización
+        l = [0] * len(coef[0])
         
         y1 = np.linspace(min(Y1),max(Y1),len(Y1))
-        print(Y1)
-        print(y1)
+        
         for i in range(len(l)):
             l[i] = y1
             z_values = f(l,coef,reg.intercept_[0])
@@ -153,8 +162,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         plt.tight_layout()
         plt.subplots_adjust(hspace = 0.5)
         
-       
-
+        # Guardar el gráfico si se especifica un nombre
         if name is not None:
             fig.savefig(name)
-        return reg,fig,error,formul,interc,coef,columnas_dep
+        return reg, fig, error, formul, interc, coef, columnas_dep

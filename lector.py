@@ -39,11 +39,17 @@ def leer_archivo(ruta):
 
     return df
 
+# Definir la función para obtener los nombres de las tablas en una base de datos SQLite
 def obtener_nombres_tablas(ruta):
     try:
+        # Conectar a la base de datos SQLite usando 'sqlite3.connect'
         with sqlite3.connect(ruta) as conn:
+            # Definir la consulta SQL para obtener los nombres de las tablas
             query = "SELECT name FROM sqlite_master WHERE type='table';"
+            # Ejecutar la consulta y obtener el resultado
             resultado = conn.execute(query)
+            # Extraer los nombres de las tablas de las filas del resultado
             return [row[0] for row in resultado.fetchall()]
     except Exception as e:
+        # Capturar cualquier excepción y elevar un RuntimeError con un mensaje descriptivo
         raise RuntimeError(f"Error al obtener nombres de tablas: {str(e)}")
