@@ -85,12 +85,37 @@ def plot_grafico(fig):
 
     canvas.bind('<Configure>', on_canvas_configure)
     canvas_fig.draw_idle()
+def mostrar_ventana_entrada():
+    global ventana_entrada,cuadro_texto
+    # Crear una nueva ventana superior (Toplevel)
+    ventana_entrada = tk.Toplevel(ventana)
+    ventana_entrada.update_idletasks()
+    width = 400
+    height = 200
+    x = (ventana_entrada.winfo_screenwidth() - width) // 2
+    y = (ventana_entrada.winfo_screenheight() - height) // 2
+    ventana_entrada.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+    ventana_entrada.title("Descripción")
+
+    # Etiqueta y cuadro de entrada en la nueva ventana
+    etiqueta_entrada = tk.Label(ventana_entrada, text="Describa su regresión")
+    etiqueta_entrada.pack(pady=10)
+
+    cuadro_texto = tk.Text(ventana_entrada, wrap="word", height=5, width=40)  # Puedes ajustar height y width según tus necesidades
+    cuadro_texto.pack(pady=10, expand=True)
+    boton_desc = tk.Button(ventana_entrada,text='Guardar',command=guardar_modelo)
+    boton_desc.pack(padx=5,pady=5)
+
 
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
-
+    descripcion=cuadro_texto.get('1.0',tk.END)
+    print(descripcion)
+    descripcion1=descripcion
+    ventana_entrada.destroy()
     lista_vo = [opcion_seleccionada.get()]
     list_vi = []
+    
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get() == True:
             list_vi.append(columnas[i])
@@ -252,7 +277,7 @@ def crear_checkbuttons():
         radiobutton.grid(row=1, column=i+1, sticky="w")
     boton_cargar = tk.Button(frame_but2, text="MOSTRAR MODELO", command=mostrar_modelo)
     boton_cargar.grid(row=2,column=5,pady=3)
-    boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=guardar_modelo)
+    boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=mostrar_ventana_entrada)
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
      
 def limpiar_interfaz(n):
