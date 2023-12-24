@@ -53,38 +53,32 @@ def mostrar_formula(error, formula, n):
     etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
-    # Crear un lienzo en el frame_grafica
-    
-    canvas = tk.Canvas(frame_grafica,bg=fondo,highlightthickness=0)
-    canvas.pack(expand=True, fill='both')
-
-    # Crear un frame en el lienzo
-    frame_canvas = tk.Frame(canvas,bg=fondo)
-    canvas.create_window((0, 0), window=frame_canvas, anchor=tk.NW)
-
-    # Configurar la barra de desplazamiento horizontal
-    scrollbar_horizontal = ttk.Scrollbar(frame_canvas, orient=tk.HORIZONTAL, command=canvas.xview)
-    scrollbar_horizontal.pack(side=tk.BOTTOM, fill=tk.X)
-
-    # Configurar el lienzo para que la barra de desplazamiento horizontal afecte a la vista
-    canvas.config(xscrollcommand=scrollbar_horizontal.set, scrollregion=canvas.bbox("all"))
-
-    # Función para actualizar la vista del lienzo cuando se desplaza horizontalmente
+    # Función para manejar el desplazamiento horizontal del lienzo
     def on_canvas_scroll_x(*args):
-        canvas.xview(*args)
+        my_canvas.xview(*args)
 
-    scrollbar_horizontal.config(command=on_canvas_scroll_x)
+    # Crear una barra de desplazamiento horizontal
+    scrollbar_horizontal = ttk.Scrollbar(frame_grafica, orient="horizontal", command=on_canvas_scroll_x)
+    scrollbar_horizontal.pack(side='top', fill='x')
+
+    # Crear un lienzo que se conectará a la barra de desplazamiento
+    my_canvas = tk.Canvas(frame_grafica, xscrollcommand=scrollbar_horizontal.set, highlightthickness=0)
+    my_canvas.pack(side='bottom', fill="both", expand=True)
+
+    # Crear un marco secundario en el lienzo
+    second_frame = tk.Frame(my_canvas)
 
     # Configurar el lienzo para la figura de Matplotlib
-    canvas_fig = FigureCanvasTkAgg(fig, master=frame_canvas)
+    canvas_fig = FigureCanvasTkAgg(fig, master=second_frame)
     canvas_widget = canvas_fig.get_tk_widget()
     canvas_widget.pack(expand=tk.YES, fill=tk.BOTH)
 
-    def on_canvas_configure(event):
-        canvas.config(scrollregion=canvas.bbox("all"))
+    # Crear la ventana en el lienzo para el marco secundario
+    my_canvas.create_window((0, 0), window=second_frame, anchor='nw')
 
-    canvas.bind('<Configure>', on_canvas_configure)
-    canvas_fig.draw_idle()
+    # Vincular la función de configuración del lienzo al evento de configuración del marco secundario
+    second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+
 def mostrar_ventana_entrada():
     global ventana_entrada,cuadro_texto
     # Crear una nueva ventana superior (Toplevel)
