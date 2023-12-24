@@ -110,8 +110,6 @@ def mostrar_ventana_entrada():
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
     descripcion=cuadro_texto.get('1.0',tk.END)
-    print(descripcion)
-    descripcion1=descripcion
     ventana_entrada.destroy()
     lista_vo = [opcion_seleccionada.get()]
     list_vi = []
