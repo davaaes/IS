@@ -8,6 +8,7 @@ import lector as l
 from modelos import *
 import joblib
 from decimal import Decimal, getcontext
+from scroll_horizontal import *
 
 
 global estados_checkbuttons, opcion_seleccionada, list_vi
@@ -53,31 +54,17 @@ def mostrar_formula(error, formula, n):
     etiqueta_formula_error.pack()
 
 def plot_grafico(fig):
-    # Función para manejar el desplazamiento horizontal del lienzo
-    def on_canvas_scroll_x(*args):
-        my_canvas.xview(*args)
 
-    # Crear una barra de desplazamiento horizontal
-    scrollbar_horizontal = ttk.Scrollbar(frame_grafica, orient="horizontal", command=on_canvas_scroll_x)
-    scrollbar_horizontal.pack(side='top', fill='x')
-
-    # Crear un lienzo que se conectará a la barra de desplazamiento
-    my_canvas = tk.Canvas(frame_grafica, xscrollcommand=scrollbar_horizontal.set, highlightthickness=0)
-    my_canvas.pack(side='bottom', fill="both", expand=True)
-
-    # Crear un marco secundario en el lienzo
-    second_frame = tk.Frame(my_canvas)
+    # Crear un marco secundario en el lienzo con el scroll configurado
+    my_canvas,second_frame = configurar_scroll_horizontal(frame_grafica)
 
     # Configurar el lienzo para la figura de Matplotlib
     canvas_fig = FigureCanvasTkAgg(fig, master=second_frame)
     canvas_widget = canvas_fig.get_tk_widget()
     canvas_widget.pack(expand=tk.YES, fill=tk.BOTH)
 
-    # Crear la ventana en el lienzo para el marco secundario
-    my_canvas.create_window((0, 0), window=second_frame, anchor='nw')
-
-    # Vincular la función de configuración del lienzo al evento de configuración del marco secundario
-    second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
+    # Configurar la ventana en el lienzo y vincular la función de configuración
+    configurar_marco_scroll(my_canvas,second_frame)
 
 def mostrar_ventana_entrada():
     global ventana_entrada,cuadro_texto
@@ -99,7 +86,6 @@ def mostrar_ventana_entrada():
     cuadro_texto.pack(pady=10, expand=True)
     boton_desc = tk.Button(ventana_entrada,text='Guardar',command=guardar_modelo)
     boton_desc.pack(padx=5,pady=5)
-
 
 def guardar_modelo():
     global dataframe, opcion_seleccionada, estados_checkbuttons
@@ -146,6 +132,7 @@ def guardar_modelo():
         tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
     except Exception as e:
         tk.messagebox.showerror("Error", f"Error al guardar el modelo: {e}")
+
 def mostrar_descripcion(descripcion):
     frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
     frame_descripcion.pack()
@@ -153,6 +140,7 @@ def mostrar_descripcion(descripcion):
     feliznavidadalberto.pack()
     felizanoalberto=tk.Label(frame_grafica,text=descripcion,padx=10)
     felizanoalberto.pack()
+
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
 
@@ -298,9 +286,6 @@ def limpiar_interfaz(n):
 # Crear ventana y otros elementos
 contenido_cajas = []
 
-def on_horizontal_scroll(*args):
-    my_canvas.xview(*args)
-
 def obtener_contenido_cajas():
     """
     Función para obtener el contenido actual de las cajas de entrada.
@@ -337,15 +322,15 @@ def mostrar_prediccion(reg_model):
     etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
     
 def predicciones(list_vi, reg_model):
+    # Declarar variables globales necesarias
     global my_canvas, contenido_cajas, etiqueta_prediccion
-    
-    my_scrollbar = ttk.Scrollbar(frame_predicciones, orient="horizontal", command=on_horizontal_scroll)
-    my_scrollbar.pack(side='top', fill='x')
-    my_canvas = tk.Canvas(frame_predicciones, xscrollcommand=my_scrollbar.set,highlightthickness=0)
-    my_canvas.pack(side='bottom', fill="both", expand=True)
-    second_frame = tk.Frame(my_canvas)
+
+    # Crear un marco secundario en el lienzo con el scroll configurado
+    my_canvas,second_frame = configurar_scroll_horizontal(frame_predicciones)
+
     j = 0
-    
+
+    # Crear etiquetas y entradas para cada elemento en la lista de variables
     for i in list_vi:
         nombre = tk.Label(second_frame, text=str(i))
         nombre.grid(column=j, row=0, padx=4)
@@ -355,13 +340,14 @@ def predicciones(list_vi, reg_model):
         j += 1
         # Agregar la caja de entrada a la lista
         contenido_cajas.append(entrada_texto)
-    
-    my_canvas.create_window((0, 0), window=second_frame, anchor='nw')
-    second_frame.bind("<Configure>", lambda event, canvas=my_canvas: canvas.configure(scrollregion=my_canvas.bbox("all")))
 
+    # Configurar la ventana en el lienzo y vincular la función de configuración
+    configurar_marco_scroll(my_canvas,second_frame)
+
+    # Obtener la posición de la última caja para posicionar el botón y la etiqueta
     ultima_caja_coords = contenido_cajas[-1].winfo_geometry().split('+')
     x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
-    
+
     # Botón para obtener y mostrar el contenido actual
     boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Predicción", command=lambda: mostrar_prediccion(reg_model))
     boton_obtener_contenido.place(x=x_pos_ultima_caja + 20, y=int(ultima_caja_coords[2]) + 60)
