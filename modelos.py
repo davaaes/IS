@@ -14,11 +14,11 @@ class Modelo:
         # Inicializa el modelo como None
         self.modelo = None
 
-    def entrenar_modelo(self, columna_indep, columnas_dep, df):
+    def entrenar_modelo(self, columna_indep, columnas_dep,descripcion, df):
         # Función para entrenar un modelo de regresión lineal
         reg, fig, error, formula, interc, coef, columna_dep = regresion(columna_indep, columnas_dep, df)
         # Almacena el modelo y otros resultados relevantes
-        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep)
+        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep, descripcion)
         return self.modelo
 
     def predecir(self, X):

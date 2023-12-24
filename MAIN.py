@@ -144,7 +144,7 @@ def guardar_modelo():
     modelo = Modelo()
 
     # Entrenar el modelo y asignarlo a la instancia
-    modelo.entrenar_modelo(lista_vo, list_vi, dataframe)
+    modelo.entrenar_modelo(lista_vo, list_vi,descripcion, dataframe)
 
     try:
         # Guardar el modelo utilizando la clase Modelo
@@ -152,7 +152,13 @@ def guardar_modelo():
         tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
     except Exception as e:
         tk.messagebox.showerror("Error", f"Error al guardar el modelo: {e}")
-
+def mostrar_descripcion(descripcion):
+    frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
+    frame_descripcion.pack()
+    feliznavidadalberto=tk.Label(frame_grafica,text='DESCRIPCIÓN DEL MODELO:')
+    feliznavidadalberto.pack()
+    felizanoalberto=tk.Label(frame_grafica,text=descripcion,padx=10)
+    felizanoalberto.pack()
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
 
@@ -170,12 +176,12 @@ def cargarModelo():
         if modelo_interno is not None:
             limpiar_interfaz(1)
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            reg,fig,error, formula, intercepto, coeficientes,columna_indep = modelo_interno
+            reg,fig,error, formula, intercepto, coeficientes,columna_indep,descripcion = modelo_interno
               # Assuming the intercept is stored in the array
             coeficientes = coeficientes.flatten().tolist()
             predicciones(columna_indep,reg)
             mostrar_formula(error,formula,1)
-
+            mostrar_descripcion(descripcion)
             # Ahora tendrás tus coeficientes como una lista con comas
             # Mostrar detalles del modelo cargado
             
