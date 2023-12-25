@@ -284,7 +284,7 @@ def limpiar_interfaz(n):
         for widget in frame_predicciones.winfo_children():
             widget.destroy() 
 # Crear ventana y otros elementos
-contenido_cajas = []
+
 
 def obtener_contenido_cajas():
     """
@@ -325,7 +325,9 @@ def predicciones(list_vi, reg_model):
     # Declarar variables globales necesarias
     global my_canvas, contenido_cajas, etiqueta_prediccion
 
+    contenido_cajas = []
     # Crear un marco secundario en el lienzo con el scroll configurado
+
     my_canvas,second_frame = configurar_scroll_horizontal(frame_predicciones)
 
     j = 0
