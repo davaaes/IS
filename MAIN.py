@@ -402,4 +402,3 @@ frame_predicciones=tk.Frame(ventana,padx=5,pady=5)
 frame_predicciones.pack(fill="both", expand=True)
 
 ventana.mainloop()
-
