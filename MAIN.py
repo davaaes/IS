@@ -315,11 +315,12 @@ def obtener_y_mostrar_contenido(reg_model):
     return prediccion
 
 def mostrar_prediccion(reg_model):
+    variable_objetivo = opcion_seleccionada.get()
     # Obtener la predicción
     prediccion = obtener_y_mostrar_contenido(reg_model)
 
     # Mostrar la predicción en tu interfaz gráfica
-    etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
+    etiqueta_prediccion.config(text=f"La predicción de {variable_objetivo} es: {prediccion}")
     
 def predicciones(list_vi, reg_model):
     # Declarar variables globales necesarias
@@ -327,7 +328,6 @@ def predicciones(list_vi, reg_model):
 
     contenido_cajas = []
     # Crear un marco secundario en el lienzo con el scroll configurado
-
     my_canvas,second_frame = configurar_scroll_horizontal(frame_predicciones)
 
     j = 0
