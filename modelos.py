@@ -18,7 +18,7 @@ class Modelo:
         # Función para entrenar un modelo de regresión lineal
         reg, fig, error, formula, interc, coef, columna_dep = regresion(columna_indep, columnas_dep, df)
         # Almacena el modelo y otros resultados relevantes
-        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep, descripcion)
+        self.modelo = (reg, fig, error, formula, interc, coef, columnas_dep, columna_indep, descripcion)
         return self.modelo
 
     def predecir(self, X):
@@ -94,9 +94,9 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         ax = fig.add_subplot(111)
         ax.scatter(X1, Y1, label='Datos', s=10)
         ax.plot(X1, y_pred, color='red', label='Línea de regresión')
-        ax.set_xlabel(str(columna_indep[0]).upper())
-        ax.set_ylabel(str(columnas_dep[0]).upper())
-        leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(interc) + ")"
+        leyend = f"{str(columna_indep)} = " + f"({str(coef[0][0])}) * {str(columnas_dep[0])} + ({str(interc)})"
+        ax.set_xlabel(str(columnas_dep[0]).upper())
+        ax.set_ylabel(str(columna_indep[0]).upper())
         ax.set_title('Regresión Lineal Simple')
 
         # Guardar el gráfico si se especifica un nombre
@@ -121,8 +121,8 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         y_pred = reg.predict(np.vstack((x1_mesh.ravel(), x2_mesh.ravel())).T)
         y_pred = y_pred.reshape(x1_mesh.shape)
         ax.plot_surface(x1_mesh, x2_mesh, y_pred, alpha=0.5)
-        leyend = "Y = " + "(" + str(coef[0][0]) + ")" + "*x1 + " + "(" + str(coef[0][0]) + ")" + "*x2 +" + "(" + str(
-            interc) + ")"
+        leyend = f"{str(columna_indep)} = " + f"({str(coef[0][0])}) * {str(columnas_dep[0])} + ({str(coef[0][1])}) * {str(columnas_dep[1])} + ({str(interc)})"
+
         
         # Guardar el gráfico si se especifica un nombre
         if name is not None:
@@ -134,10 +134,8 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         fig, axs = plt.subplots(1, len(columnas_dep), figsize=(3 * len(columnas_dep), 2))
         
         # Crear la fórmula de la regresión
-        formul = "Y = " 
-        for i in range(len(coef[0])):
-            formul += ("(" + str(coef[0][i])+")" + "*x" + str(i+1) + " + ") 
-        formul += "("  + str(   interc  ) + ")"
+        formul = f"{str(columna_indep)} = " + " + ".join([f"({str(coef[0][i])}) * {str(columnas_dep[i])}" for i in range(len(coef[0]))]) + f" + ({str(interc)})"
+
 
         def f(n,coef,intercept):
             x = 0
