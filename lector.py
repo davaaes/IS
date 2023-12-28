@@ -2,6 +2,15 @@ import pandas as pd
 import sqlite3
 
 def leer_archivo(ruta):
+    """
+    Lee un archivo en formato CSV, Excel o SQLite y devuelve un DataFrame de Pandas.
+
+    Parameters:
+    - ruta (str): Ruta del archivo a leer.
+
+    Returns:
+    pd.DataFrame or None: DataFrame de Pandas que contiene los datos del archivo, o None si hay un error.
+    """
     if ruta.endswith('.csv'):
         # Si la ruta termina con '.csv', lee el archivo CSV utilizando pandas
         df = pd.read_csv(ruta)
@@ -41,6 +50,15 @@ def leer_archivo(ruta):
 
 # Definir la función para obtener los nombres de las tablas en una base de datos SQLite
 def obtener_nombres_tablas(ruta):
+    """
+    Obtiene los nombres de las tablas en una base de datos SQLite.
+
+    Parameters:
+    - ruta (str): Ruta del archivo de la base de datos SQLite.
+
+    Returns:
+    list or None: Lista de nombres de tablas, o None si hay un error.
+    """
     try:
         # Conectar a la base de datos SQLite usando 'sqlite3.connect'
         with sqlite3.connect(ruta) as conn:

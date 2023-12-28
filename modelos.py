@@ -15,27 +15,60 @@ class Modelo:
         self.modelo = None
 
     def entrenar_modelo(self, columna_indep, columnas_dep,descripcion, df):
-        # Función para entrenar un modelo de regresión lineal
+        """
+        Entrena un modelo de regresión lineal con los datos proporcionados.
+
+        Parameters:
+        - columna_indep (str): Nombre de la columna independiente.
+        - columnas_dep (list): Lista de nombres de las columnas dependientes.
+        - descripcion (str): Descripción del modelo.
+        - df (pandas.DataFrame): DataFrame que contiene los datos.
+
+        Returns:
+        tuple: Tupla con el modelo entrenado, la figura, el error, la fórmula, el intercepto, los coeficientes y las columnas dependientes.
+        """
         reg, fig, error, formula, interc, coef, columna_dep = regresion(columna_indep, columnas_dep, df)
         # Almacena el modelo y otros resultados relevantes
         self.modelo = (reg, fig, error, formula, interc, coef, columna_dep, descripcion)
         return self.modelo
 
     def predecir(self, X):
-        # Realiza predicciones utilizando el modelo entrenado
+        """
+        Realiza predicciones utilizando el modelo entrenado.
+
+        Parameters:
+        - X (numpy.ndarray): Datos para hacer predicciones.
+
+        Returns:
+        numpy.ndarray: Predicciones del modelo.
+        """
         if self.modelo is not None:
             return self.modelo[0].predict(X)
         else:
             raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
     def guardar_modelo(self, path):
-        # Guarda el modelo en un archivo utilizando joblib
+        """
+        Guarda el modelo en un archivo utilizando joblib.
+
+        Parameters:
+        - path (str): Ruta donde se guardará el modelo.
+        """
         if self.modelo is not None:
             joblib.dump(self.modelo, path)
         else:
             raise ValueError("El modelo no ha sido entrenado. Debes llamar a entrenar_modelo primero.")
 
     def cargar_modelo(self, path):
+        """
+        Carga el modelo desde un archivo utilizando joblib.
+
+        Parameters:
+        - path (str): Ruta desde la cual se carga el modelo.
+
+        Returns:
+        object: Modelo cargado.
+        """
         try:
             # Carga el modelo desde el archivo
             modelo_cargado = joblib.load(path)
@@ -47,7 +80,12 @@ class Modelo:
             return None  # Asegúrate de retornar None si hay un error
 
     def obtener_coeficientes(self):
-        # Obtiene los coeficientes de la regresión
+        """
+        Obtiene los coeficientes de la regresión.
+
+        Returns:
+        tuple: Tupla con los coeficientes y el intercepto.
+        """
         if self.modelo is not None:
             error, formula = self.modelo[2], self.modelo[3]
             return formula.coef_, formula.intercept_
@@ -56,7 +94,18 @@ class Modelo:
 
 
 def regresion(columna_indep, columnas_dep, df, name=None):
-    # Función para realizar la regresión lineal y generar gráficos
+    """
+    Realiza la regresión lineal y genera gráficos.
+
+    Parameters:
+    - columna_indep (str): Nombre de la columna independiente.
+    - columnas_dep (list): Lista de nombres de las columnas dependientes.
+    - df (pandas.DataFrame): DataFrame que contiene los datos.
+    - name (str, optional): Nombre del archivo para guardar el gráfico.
+
+    Returns:
+    tuple: Tupla con el modelo, la figura, el error, la fórmula, el intercepto, los coeficientes y las columnas dependientes.
+    """
     df = df.dropna()
     indep_v = df[columna_indep].values
     x = len(columnas_dep)

@@ -17,6 +17,10 @@ global estados_checkbuttons, opcion_seleccionada, list_vi
 
 
 def mostrar_modelo():
+    """
+    Muestra el modelo de regresión lineal en la interfaz gráfica, incluyendo la tabla de predicciones y la fórmula.
+
+    """
     global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef,list_vi
     n=1
     limpiar_interfaz(2,frame_predicciones,frame_grafica,frame_but,frame_but2,frame_tabla)
@@ -34,6 +38,15 @@ def mostrar_modelo():
     plot_grafico(fig,columna_dep)
 
 def mostrar_formula(error, formula, n):
+    """
+    Muestra la fórmula y el error del modelo en la interfaz gráfica.
+
+    Parameters:
+    - error (float): El error del modelo.
+    - formula (str): La fórmula del modelo.
+    - n (int): Número que indica si es la primera vez que se muestra la fórmula (1) o no (otros valores).
+
+    """
     global etiqueta_formula_error
 
     contenido = f"Formula={formula}\nError={error}"
@@ -46,7 +59,14 @@ def mostrar_formula(error, formula, n):
     etiqueta_formula_error.pack()
 
 def plot_grafico(fig,columna_dep):
+    """
+    Plotea el gráfico de la regresión en la interfaz gráfica.
 
+    Parameters:
+    - fig (matplotlib.figure.Figure): La figura de Matplotlib a ser mostrada.
+    - columna_dep (str): Nombre de la columna dependiente.
+
+    """
     # Crear un marco secundario en el lienzo con el scroll configurado
     my_canvas,second_frame = configurar_scroll_horizontal(frame_grafica)
 
@@ -63,6 +83,10 @@ def plot_grafico(fig,columna_dep):
         second_frame.pack(side="top", fill="both")
 
 def mostrar_ventana_entrada():
+    """
+    Muestra una ventana para que el usuario ingrese una descripción del modelo de regresión.
+
+    """
     global ventana_entrada,cuadro_texto
     # Crear una nueva ventana superior (Toplevel)
     ventana_entrada = tk.Toplevel(ventana)
@@ -84,6 +108,10 @@ def mostrar_ventana_entrada():
     boton_desc.pack(padx=5,pady=5)
 
 def guardar_modelo():
+    """
+    Guarda el modelo entrenado en un archivo utilizando la clase Modelo.
+
+    """
     global dataframe, opcion_seleccionada, estados_checkbuttons,columnas
     descripcion=cuadro_texto.get('1.0',tk.END)
     ventana_entrada.destroy()
@@ -118,6 +146,10 @@ def guardar_modelo():
         mostrar_error(f"Error al guardar el modelo: {e}")
 
 def cargarModelo():
+    """
+    Carga un modelo previamente guardado desde un archivo y muestra detalles sobre el modelo.
+
+    """
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
 
     # Seleccionar un archivo de modelo previamente guardado
@@ -151,6 +183,10 @@ def cargarModelo():
             print("El modelo interno es None. Revisa la carga del modelo.")
 
 def cargar_archivo():
+    """
+    Abre un cuadro de diálogo para que el usuario seleccione un archivo y carga los datos en la interfaz.
+
+    """
     global archivo,dataframe
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
     if archivo:
@@ -194,6 +230,10 @@ def cargar_archivo():
     crear_checkbuttons()
 
 def crear_checkbuttons():
+    """
+    Crea dinámicamente Checkbuttons para las variables independientes y Radiobuttons para la variable objetivo.
+
+    """
     # Leer las columnas desde el archivo
     # Cambia 'ruta/del/archivo.csv' con la ruta correcta de tu archivo
     global estados_checkbuttons, opcion_seleccionada,columnas 
@@ -240,6 +280,13 @@ def crear_checkbuttons():
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
 
 def mostrar_descripcion(descripcion):
+    """
+    Muestra la descripción del modelo en la interfaz gráfica.
+
+    Parameters:
+    - descripcion (str): La descripción del modelo.
+
+    """
     global ventana,frame_grafica
 
     frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
@@ -250,6 +297,13 @@ def mostrar_descripcion(descripcion):
     felizanoalberto.pack()
 
 def mostrar_prediccion(reg_model):
+    """
+    Obtiene y muestra la predicción del modelo basándose en las entradas proporcionadas por el usuario.
+
+    Parameters:
+    - reg_model: El modelo de regresión.
+
+    """
     # Obtener la predicción
     prediccion = obtener_y_mostrar_contenido(reg_model,contenido_cajas)
 
@@ -257,6 +311,14 @@ def mostrar_prediccion(reg_model):
     etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
     
 def predicciones(list_vi, reg_model):
+    """
+    Crea cajas de entrada dinámicamente para las variables independientes y muestra la predicción.
+
+    Parameters:
+    - list_vi (list): Lista de variables independientes.
+    - reg_model: El modelo de regresión.
+
+    """
     # Declarar variables globales necesarias
     global my_canvas, contenido_cajas, etiqueta_prediccion
 
@@ -294,6 +356,10 @@ def predicciones(list_vi, reg_model):
     etiqueta_prediccion.place(x=x_pos_ultima_caja + 40 + boton_obtener_contenido.winfo_reqwidth(), y=int(ultima_caja_coords[2]) + 60)
 
 def cerrar_ventana():
+    """
+    Cierra la ventana principal de la aplicación.
+
+    """
     ventana.destroy()
     sys.exit()
 

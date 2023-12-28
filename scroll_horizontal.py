@@ -2,7 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 
 def configurar_scroll_horizontal(parent_frame):
-    # Función para manejar el desplazamiento horizontal del lienzo
+    """
+    Configura el desplazamiento horizontal para un lienzo en un marco principal.
+
+    Parameters:
+    - parent_frame (tkinter.Frame): Marco principal al que se aplicará el desplazamiento horizontal.
+
+    Returns:
+    tuple: Tupla con el lienzo y el marco secundario configurados.
+    """
     def on_horizontal_scroll(*args):
         canvas.xview(*args)
 
@@ -19,6 +27,13 @@ def configurar_scroll_horizontal(parent_frame):
 
     return canvas,second_frame
 def configurar_marco_scroll(canvas,second_frame):
+    """
+    Configura el marco secundario en el lienzo para permitir el desplazamiento.
+
+    Parameters:
+    - canvas (tkinter.Canvas): Lienzo al que se conectará el marco secundario.
+    - second_frame (tkinter.Frame): Marco secundario que se configurará en el lienzo.
+    """
     # Crear la ventana en el lienzo para el marco secundario
     canvas.create_window((0, 0), window=second_frame, anchor='nw')
 
