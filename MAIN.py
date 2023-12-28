@@ -10,7 +10,7 @@ import joblib
 from decimal import Decimal, getcontext
 from scroll_horizontal import *
 from aviso_errores import *
-
+from funciones_auxiliares import *
 
 global estados_checkbuttons, opcion_seleccionada, list_vi
 
@@ -19,12 +19,9 @@ global estados_checkbuttons, opcion_seleccionada, list_vi
 def mostrar_modelo():
     global estados_checkbuttons, opcion_seleccionada,columnas,dataframe,interc,coef,list_vi
     n=1
-    limpiar_interfaz(2)
+    limpiar_interfaz(2,frame_predicciones,frame_grafica,frame_but,frame_but2,frame_tabla)
     lista_vo=[opcion_seleccionada.get()]
-    list_vi=[]
-    for i in range(len(estados_checkbuttons)):
-        if estados_checkbuttons[i].get()==True:
-            list_vi.append(columnas[i])
+    list_vi= obtener_variables_seleccionadas(estados_checkbuttons, columnas)
     if not validar_variables_seleccionadas(list_vi) or not validar_variable_objetivo(opcion_seleccionada):
         return
 
@@ -61,6 +58,7 @@ def plot_grafico(fig,columna_dep):
     # Configurar la ventana en el lienzo y vincular la función de configuración
     configurar_marco_scroll(my_canvas,second_frame)
     
+    #Si la gráfica tiene 1 o 2 columnas dependientes se ajustara al second_frame para centrarse
     if len(columna_dep)<=2:
         second_frame.pack(side="top", fill="both")
 
@@ -86,15 +84,11 @@ def mostrar_ventana_entrada():
     boton_desc.pack(padx=5,pady=5)
 
 def guardar_modelo():
-    global dataframe, opcion_seleccionada, estados_checkbuttons
+    global dataframe, opcion_seleccionada, estados_checkbuttons,columnas
     descripcion=cuadro_texto.get('1.0',tk.END)
     ventana_entrada.destroy()
     lista_vo = [opcion_seleccionada.get()]
-    list_vi = []
-    
-    for i in range(len(estados_checkbuttons)):
-        if estados_checkbuttons[i].get() == True:
-            list_vi.append(columnas[i])
+    list_vi= obtener_variables_seleccionadas(estados_checkbuttons, columnas)
 
     if not validar_variables_seleccionadas(list_vi) or not validar_variable_objetivo(opcion_seleccionada):
         return
@@ -123,14 +117,6 @@ def guardar_modelo():
     except Exception as e:
         mostrar_error(f"Error al guardar el modelo: {e}")
 
-def mostrar_descripcion(descripcion):
-    frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
-    frame_descripcion.pack()
-    feliznavidadalberto=tk.Label(frame_grafica,text='DESCRIPCIÓN DEL MODELO:')
-    feliznavidadalberto.pack()
-    felizanoalberto=tk.Label(frame_grafica,text=descripcion,padx=10)
-    felizanoalberto.pack()
-
 def cargarModelo():
     global opcion_seleccionada, estados_checkbuttons, dataframe, columnas,list_vi
 
@@ -146,7 +132,7 @@ def cargarModelo():
         
         
         if modelo_interno is not None:
-            limpiar_interfaz(1)
+            limpiar_interfaz(1,frame_predicciones,frame_grafica,frame_but,frame_but2,frame_tabla)
             # Obtener los coeficientes y el término independiente desde el modelo interno
             reg,fig,error, formula, intercepto, coeficientes,columna_indep,descripcion = modelo_interno
               # Assuming the intercept is stored in the array
@@ -164,9 +150,6 @@ def cargarModelo():
         else:
             print("El modelo interno es None. Revisa la carga del modelo.")
 
-def cerrar_programa():
-    sys.exit()
- 
 def cargar_archivo():
     global archivo,dataframe
     archivo = filedialog.askopenfilename(title="Seleccionar archivo")
@@ -180,7 +163,7 @@ def cargar_archivo():
         dataframe = l.leer_archivo(archivo)
 
         if dataframe is not None:
-            limpiar_interfaz(1)
+            limpiar_interfaz(1,frame_predicciones,frame_grafica,frame_but,frame_but2,frame_tabla)
             # Crear un Treeview para mostrar la tabla
             treeview = ttk.Treeview(frame_tabla)
             treeview["columns"] = tuple(dataframe.columns)
@@ -255,58 +238,20 @@ def crear_checkbuttons():
     boton_cargar.grid(row=2,column=5,pady=3)
     boton_guardar = tk.Button(frame_but2, text="GUARDAR MODELO", command=mostrar_ventana_entrada)
     boton_guardar.grid(row=2,column=6,pady=3,padx=5)
-     
-def limpiar_interfaz(n):
-    if n==1:
-        for widget in frame_tabla.winfo_children():
-            widget.destroy()
-        for widget in frame_grafica.winfo_children():
-            widget.destroy()
-        for widget in frame_but2.winfo_children():
-            widget.destroy()
-        for widget in frame_but.winfo_children():
-            widget.destroy()
-        for widget in frame_predicciones.winfo_children():
-            widget.destroy() 
-    elif n==2:
-        for widget in frame_grafica.winfo_children():
-            widget.destroy()
-        for widget in frame_predicciones.winfo_children():
-            widget.destroy() 
-# Crear ventana y otros elementos
 
+def mostrar_descripcion(descripcion):
+    global ventana,frame_grafica
 
-def obtener_contenido_cajas():
-    """
-    Función para obtener el contenido actual de las cajas de entrada.
-    """
-    global contenido_cajas
-
-    contenido_actual = [entrada.get() for entrada in contenido_cajas]
-    return contenido_actual
-
-def obtener_y_mostrar_contenido(reg_model):
-    """
-    Función para obtener y mostrar el contenido actual de las cajas de entrada.
-    """
-    contenido_actual = obtener_contenido_cajas()
-    print("Contenido actual de las cajas:", contenido_actual)
-
-    # Convertir los valores a un array NumPy
-    valores_x = np.array(contenido_actual, dtype=float)
-
-    # Reshape para que sea 2D si es necesario
-    if len(valores_x.shape) == 1:
-        valores_x = valores_x.reshape(1, -1)
-
-    # Realizar la predicción
-    prediccion = reg_model.predict(valores_x)
-
-    return prediccion
+    frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
+    frame_descripcion.pack()
+    feliznavidadalberto=tk.Label(frame_grafica,text='DESCRIPCIÓN DEL MODELO:')
+    feliznavidadalberto.pack()
+    felizanoalberto=tk.Label(frame_grafica,text=descripcion,padx=10)
+    felizanoalberto.pack()
 
 def mostrar_prediccion(reg_model):
     # Obtener la predicción
-    prediccion = obtener_y_mostrar_contenido(reg_model)
+    prediccion = obtener_y_mostrar_contenido(reg_model,contenido_cajas)
 
     # Mostrar la predicción en tu interfaz gráfica
     etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
@@ -352,6 +297,7 @@ def cerrar_ventana():
     ventana.destroy()
     sys.exit()
 
+# Crear ventana y otros elementos
 ventana = tk.Tk()
 ventana.protocol("WM_DELETE_WINDOW", cerrar_ventana)
 ancho_pantalla = ventana.winfo_screenwidth()
