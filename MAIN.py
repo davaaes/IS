@@ -9,6 +9,7 @@ from modelos import *
 import joblib
 from decimal import Decimal, getcontext
 from scroll_horizontal import *
+from aviso_errores import *
 
 
 global estados_checkbuttons, opcion_seleccionada, list_vi
@@ -24,22 +25,16 @@ def mostrar_modelo():
     for i in range(len(estados_checkbuttons)):
         if estados_checkbuttons[i].get()==True:
             list_vi.append(columnas[i])
-    if len(list_vi)==0:
-        tk.messagebox.showerror("Error", "Seleccione al menos una variable independiente.")
+    if not validar_variables_seleccionadas(list_vi) or not validar_variable_objetivo(opcion_seleccionada):
         return
 
-    # Verificar si se ha seleccionado una variable objetivo
-    if not opcion_seleccionada.get():
-        tk.messagebox.showerror("Error", "Seleccione una variable objetivo.")
-        return
-    if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
-        tk.messagebox.showerror("Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto.")
+    if not validar_variable_ocean_proximity(list_vi, lista_vo):
         return
     
     reg,fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
     predicciones(list_vi,reg)
     mostrar_formula(error,formula,n)
-    plot_grafico(fig)
+    plot_grafico(fig,columna_dep)
 
 def mostrar_formula(error, formula, n):
     global etiqueta_formula_error
@@ -53,7 +48,7 @@ def mostrar_formula(error, formula, n):
 
     etiqueta_formula_error.pack()
 
-def plot_grafico(fig):
+def plot_grafico(fig,columna_dep):
 
     # Crear un marco secundario en el lienzo con el scroll configurado
     my_canvas,second_frame = configurar_scroll_horizontal(frame_grafica)
@@ -61,10 +56,13 @@ def plot_grafico(fig):
     # Configurar el lienzo para la figura de Matplotlib
     canvas_fig = FigureCanvasTkAgg(fig, master=second_frame)
     canvas_widget = canvas_fig.get_tk_widget()
-    canvas_widget.pack(expand=tk.YES, fill=tk.BOTH)
+    canvas_widget.pack(side="top",expand=True, fill="both")
 
     # Configurar la ventana en el lienzo y vincular la función de configuración
     configurar_marco_scroll(my_canvas,second_frame)
+    
+    if len(columna_dep)<=2:
+        second_frame.pack(side="top", fill="both")
 
 def mostrar_ventana_entrada():
     global ventana_entrada,cuadro_texto
@@ -98,18 +96,10 @@ def guardar_modelo():
         if estados_checkbuttons[i].get() == True:
             list_vi.append(columnas[i])
 
-    if len(list_vi) == 0:
-        tk.messagebox.showerror("Error", "Seleccione al menos una variable independiente.")
+    if not validar_variables_seleccionadas(list_vi) or not validar_variable_objetivo(opcion_seleccionada):
         return
 
-    if not opcion_seleccionada.get():
-        tk.messagebox.showerror("Error", "Seleccione una variable objetivo.")
-        return
-
-    if "ocean_proximity" in list_vi or "ocean_proximity" in lista_vo:
-        tk.messagebox.showerror(
-            "Error", "La variable ocean_proximity no puede usarse como variable ya que es una cadena de texto."
-        )
+    if not validar_variable_ocean_proximity(list_vi, lista_vo):
         return
 
     file_path = filedialog.asksaveasfilename(
@@ -129,9 +119,9 @@ def guardar_modelo():
     try:
         # Guardar el modelo utilizando la clase Modelo
         modelo.guardar_modelo(file_path)
-        tk.messagebox.showinfo("Éxito", f"Modelo guardado en: {file_path}")
+        mostrar_info(f"Modelo guardado en: {file_path}")
     except Exception as e:
-        tk.messagebox.showerror("Error", f"Error al guardar el modelo: {e}")
+        mostrar_error(f"Error al guardar el modelo: {e}")
 
 def mostrar_descripcion(descripcion):
     frame_descripcion=tk.Frame(ventana,padx=5,pady=5)
