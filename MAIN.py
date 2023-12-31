@@ -32,8 +32,8 @@ def mostrar_modelo():
     if not validar_variable_ocean_proximity(list_vi, lista_vo):
         return
     
-    reg,fig,error,formula,interc,coef,columna_dep= regresion(lista_vo, list_vi, dataframe)
-    predicciones(list_vi,reg)
+    reg,fig,error,formula,interc,coef,columna_dep,columna_indep= regresion(lista_vo, list_vi, dataframe)
+    predicciones(columna_dep,reg,columna_indep)
     mostrar_formula(error,formula,n)
     plot_grafico(fig,columna_dep)
 
@@ -166,10 +166,10 @@ def cargarModelo():
         if modelo_interno is not None:
             limpiar_interfaz(1,frame_predicciones,frame_grafica,frame_but,frame_but2,frame_tabla)
             # Obtener los coeficientes y el término independiente desde el modelo interno
-            reg,fig,error, formula, intercepto, coeficientes,columna_indep,descripcion = modelo_interno
+            reg,fig,error, formula, intercepto, coeficientes,columna_dep,descripcion,columna_indep = modelo_interno
               # Assuming the intercept is stored in the array
             coeficientes = coeficientes.flatten().tolist()
-            predicciones(columna_indep,reg)
+            predicciones(columna_dep,reg,columna_indep)
             mostrar_formula(error,formula,1)
             mostrar_descripcion(descripcion)
             # Ahora tendrás tus coeficientes como una lista con comas
@@ -296,27 +296,30 @@ def mostrar_descripcion(descripcion):
     felizanoalberto=tk.Label(frame_grafica,text=descripcion,padx=10)
     felizanoalberto.pack()
 
-def mostrar_prediccion(reg_model):
+def mostrar_prediccion(reg_model,variable_obj):
     """
     Obtiene y muestra la predicción del modelo basándose en las entradas proporcionadas por el usuario.
 
     Parameters:
     - reg_model: El modelo de regresión.
+    -variable_obj(str):nombre de la variable objeto
 
     """
+
     # Obtener la predicción
     prediccion = obtener_y_mostrar_contenido(reg_model,contenido_cajas)
 
     # Mostrar la predicción en tu interfaz gráfica
-    etiqueta_prediccion.config(text=f"La predicción es: {prediccion}")
+    etiqueta_prediccion.config(text=f"La predicción de {variable_obj} es: {prediccion}")
     
-def predicciones(list_vi, reg_model):
+def predicciones(list_vi, reg_model,variable_obj):
     """
     Crea cajas de entrada dinámicamente para las variables independientes y muestra la predicción.
 
     Parameters:
     - list_vi (list): Lista de variables independientes.
     - reg_model: El modelo de regresión.
+    -variable_obj(str):nombre de la variable objeto
 
     """
     # Declarar variables globales necesarias
@@ -348,7 +351,7 @@ def predicciones(list_vi, reg_model):
     x_pos_ultima_caja = int(ultima_caja_coords[1]) + contenido_cajas[-1].winfo_x()
 
     # Botón para obtener y mostrar el contenido actual
-    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Predicción", command=lambda: mostrar_prediccion(reg_model))
+    boton_obtener_contenido = tk.Button(frame_predicciones, text="Obtener Predicción", command=lambda: mostrar_prediccion(reg_model,variable_obj))
     boton_obtener_contenido.place(x=x_pos_ultima_caja + 20, y=int(ultima_caja_coords[2]) + 60)
 
     # Etiqueta para mostrar la predicción

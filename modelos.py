@@ -25,11 +25,11 @@ class Modelo:
         - df (pandas.DataFrame): DataFrame que contiene los datos.
 
         Returns:
-        tuple: Tupla con el modelo entrenado, la figura, el error, la fórmula, el intercepto, los coeficientes y las columnas dependientes.
+        tuple: Tupla con el modelo entrenado, la figura, el error, la fórmula, el intercepto, los coeficientes , las columnas dependientes y la independiente.
         """
-        reg, fig, error, formula, interc, coef, columna_dep = regresion(columna_indep, columnas_dep, df)
+        reg, fig, error, formula, interc, coef, columna_dep,columna_indep = regresion(columna_indep, columnas_dep, df)
         # Almacena el modelo y otros resultados relevantes
-        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep, descripcion)
+        self.modelo = (reg, fig, error, formula, interc, coef, columna_dep, descripcion,columna_indep)
         return self.modelo
 
     def predecir(self, X):
@@ -152,7 +152,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return reg, fig, error, leyend, interc, coef, columnas_dep
+            return reg, fig, error, leyend, interc, coef, columnas_dep,columna_indep
 
     elif len(columnas_dep) == 2:
         # Gráfico para la regresión lineal múltiple (2D)
@@ -177,7 +177,7 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         if name is not None:
             fig.savefig(name)
         else:
-            return reg, fig, error, leyend, interc, coef, columnas_dep
+            return reg, fig, error, leyend, interc, coef, columnas_dep,columna_indep
     elif len(columnas_dep) > 2:
         # Gráficos para la regresión lineal múltiple (más de 2D)
         fig, axs = plt.subplots(1, len(columnas_dep), figsize=(3 * len(columnas_dep), 2))
@@ -212,4 +212,4 @@ def regresion(columna_indep, columnas_dep, df, name=None):
         # Guardar el gráfico si se especifica un nombre
         if name is not None:
             fig.savefig(name)
-        return reg, fig, error, formul, interc, coef, columnas_dep
+        return reg, fig, error, formul, interc, coef, columnas_dep,columna_indep
